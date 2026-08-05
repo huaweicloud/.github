@@ -24,11 +24,12 @@ New Pull Request (Fixes #N)
 │                                              │
 │ CODEOWNERS 自动分配 Reviewer                 │
 │                                              │
-│ 需要 2 人 Approve                             │
+│ 需要 2 人 Approve（仅分支保护启用的仓库）       │
 │   ├── 新 commit 后旧 Approve 失效              │
 │   └── Code Owner 必须 Review                  │
 │                                              │
-│ Conversation 必须 Resolve                     │
+│ ※ 分支保护仅新 public 仓库自动启用；            │
+│   private 及存量仓库无此强制                   │
 └─────────────────────────────────────────────┘
     ↓
 CI 全绿 + 2 Approve + 对话 Resolve
@@ -42,17 +43,27 @@ Issue 自动关闭 → status/resolved
 
 ## 一、PR 标准配置
 
+### 分支保护（Branch Protection）
+
+> **适用范围**：仅**新建的 public 仓库**在建仓时自动启用（`repo_creator.py` 的 `setup_branch_protection`）。
+> - **private 仓库**：受 GitHub Free 计划限制，无法配置分支保护，建仓时自动跳过。
+> - **现有存量仓库**：未批量补配，如需启用请在仓库 Settings → Branches 手动配置。
+
 | 配置项 | 值 | 说明 |
 |--------|-----|------|
-| **CI Pipeline** | lint → test → build | .github/workflows/ci.yml |
 | **需 Approve 数** | 2 人 | 不能自己 approve 自己 |
 | **Code Owner Review** | 必须 | CODEOWNERS 中指定的人必须审批 |
 | **过期 Review 作废** | 开启 | push 新 commit 后旧 approve 失效 |
-| **Conversation Resolve** | 必须 | 所有评论对话必须解决 |
 | **Branch 必须最新** | strict 模式 | 合并前自动检查是否 behind main |
 | **强制推送** | 禁止 | `git push -f` 被阻止 |
 | **分支删除** | 禁止 | 无法删除 main 分支 |
 | **直接 push main** | 禁止 | 必须通过 PR |
+
+### 通用配置（所有仓库）
+
+| 配置项 | 值 | 说明 |
+|--------|-----|------|
+| **CI Pipeline** | lint → test → build | .github/workflows/ci.yml |
 | **签名提交** | 暂时关闭 | 后续为 bot 配置 GPG 后开启 |
 
 ---
@@ -209,14 +220,16 @@ git commit -S -m "feat: xxx"
 
 ## 七、不能合并的情况
 
+> 以下 CI / 分支保护相关限制，在**分支保护启用的仓库**（新建 public 仓库）强制执行；
+> private 及未启用分支保护的存量仓库仅 CI 会拦截，Approve/Code Owner 等需人工遵守。
+
 | 原因 | 表现 |
 |------|------|
 | CI 未通过 | `lint`/`test`/`build` 任一项标红 |
-| Approve 不足 | 需 2 人，当前 0-1 人 |
-| Code Owner 未 review | 指定目录的代码所有者未审批 |
-| 对话未解决 | 有未 resolve 的 conversation |
-| Branch 过期 | 需要 rebase main |
-| Approve 失效 | push 了新 commit 需重新审批 |
+| Approve 不足（仅保护仓库） | 需 2 人，当前 0-1 人 |
+| Code Owner 未 review（仅保护仓库） | 指定目录的代码所有者未审批 |
+| Branch 过期（仅保护仓库 strict） | 需要 rebase main |
+| Approve 失效（仅保护仓库） | push 了新 commit 需重新审批 |
 | 签名缺失 | （暂未启用） |
 
 ---
@@ -266,9 +279,9 @@ gh pr checks <N> -R huaweicloud/<repo>
 # Approve PR
 gh pr review <N> -R huaweicloud/<repo> --approve
 
-# 合并 PR（满足条件时）
-gh pr merge <N> -R huaweicloud/<repo> --merge --delete-branch
+# 合并 PR（满足条件时；建仓仓库为 squash-only）
+gh pr merge <N> -R huaweicloud/<repo> --squash --delete-branch
 
-# 强制合并（管理员，跳过等待）
-gh pr merge <N> -R huaweicloud/<repo> --merge --admin --delete-branch
+# 强制合并（管理员，跳过等待；跳过 Approve/CI 检查）
+gh pr merge <N> -R huaweicloud/<repo> --squash --admin --delete-branch
 ```
