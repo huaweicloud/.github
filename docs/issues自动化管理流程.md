@@ -288,15 +288,21 @@ reports/
 | Workflow | 触发方式 | 频率 |
 |----------|---------|------|
 | `triage-issue.yml` | Issue opened | 实时 |
+| `issue-bot.yml` | Issue opened/edited + issue_comment | 实时 |
+| `issue-digest.yml` | schedule / workflow_dispatch | 每日 |
+| `triage-agent.yml` | Issue opened/edited + issue_comment | 实时 |
+| `historical-triage.yml` | schedule / workflow_dispatch | 按需 |
 | `feishu-notify.yml` | workflow_call / workflow_dispatch | 按需 |
 | `sla-monitor.yml` | schedule | 每小时 |
 | `stale-manager.yml` | schedule | 每周一 02:30 UTC |
 | `daily-reminder.yml` | schedule | 工作日 01:00 UTC |
 | `status-transition.yml` | PR opened/closed + issue closed | 实时 |
 | `issue-stats.yml` | schedule / workflow_dispatch | 每周一 09:00 UTC |
-| `weekly-report.yml` | schedule | 每周一 09:00 UTC |
-| `monthly-report.yml` | schedule | 每月 1 号 |
+| `weekly-report.yml` | schedule / workflow_dispatch | 每周一 09:00 UTC |
+| `monthly-report.yml` | schedule / workflow_dispatch | 每月 1 号 |
 | `sla-daily.yml` | schedule | 工作日 08:00 UTC |
+| `sync-to-gitcode.yml` | push main | 实时 |
+| `governance-audit.yml` | schedule / workflow_dispatch | 每月 1 号 |
 | `gitcode-triage.yml` | schedule | 每 6 小时 |
 | `gitcode-sla.yml` | schedule | 每小时 |
 | `gitcode-stale.yml` | schedule | 每天 03:00 UTC |
@@ -305,17 +311,23 @@ reports/
 
 ## 八、组织 Secrets
 
+> **级别说明**：组织级 secret 已配置 `visibility=all`，但对**新建仓库**及 **`.github` 配置仓库**的传播不可靠。
+> 因此 `.github` 配置中心使用**仓库级** secrets（与组织级同值）；新建仓库由建仓流程（`setup_repo_secrets`）写入仓库级 `BOT_TOKEN` + `GITCODE_TOKEN`。
+
 | Secret | 用途 | 级别 |
 |--------|------|------|
-| `FEISHU_APP_ID` | 飞书应用 ID | 组织级 + .github |
-| `FEISHU_APP_SECRET` | 飞书应用密钥 | 组织级 + .github |
-| `FEISHU_ADMIN_OPEN_ID` | 管理员 open_id（ou_f3dxxx） | 组织级 + .github |
-| `SMTP_HOST` | QQ 邮箱 SMTP 服务器（smtp.qq.com） | 组织级 + .github |
-| `SMTP_PORT` | SMTP 端口（587） | 组织级 + .github |
-| `SMTP_USER` | SMTP 账号（1993953167@qq.com） | 组织级 + .github |
-| `SMTP_PASS` | SMTP 授权码（QQ 邮箱） | 组织级 + .github |
-| `EMAIL_REPORT_TO` | 报表接收邮箱（1993953167@qq.com） | 组织级 + .github |
-| `GITCODE_TOKEN` | GitCode API Token | 组织级 + .github |
+| `FEISHU_APP_ID` | 飞书应用 ID | 组织级 + .github 仓库级 |
+| `FEISHU_APP_SECRET` | 飞书应用密钥 | 组织级 + .github 仓库级 |
+| `FEISHU_ADMIN_OPEN_ID` | 管理员 open_id（ou_f3dxxx） | 组织级 + .github 仓库级 |
+| `SMTP_HOST` | QQ 邮箱 SMTP 服务器（smtp.qq.com） | 组织级 + .github 仓库级 |
+| `SMTP_PORT` | SMTP 端口（587） | 组织级 + .github 仓库级 |
+| `SMTP_USER` | SMTP 账号（1993953167@qq.com） | 组织级 + .github 仓库级 |
+| `SMTP_PASS` | SMTP 授权码（QQ 邮箱） | 组织级 + .github 仓库级 |
+| `EMAIL_REPORT_TO` | 报表接收邮箱（1993953167@qq.com） | 组织级 + .github 仓库级 |
+| `GITCODE_TOKEN` | GitCode API Token | 组织级 + .github 仓库级 |
+| `GITCODE_USERNAME` | GitCode 用户名 | 组织级 + .github 仓库级 |
+| `ARCHIVE_TOKEN` | 报表归档（推送 reports 仓库） | 组织级 + .github 仓库级 |
+| `BOT_TOKEN` | 跨仓库操作（checkout .github / 建仓 / 审批） | 组织级 + 建仓写入新仓库 |
 | `GITHUB_TOKEN` | GitHub API | 默认提供 |
 
 ---
@@ -389,6 +401,6 @@ gh workflow run gitcode-stale.yml -R huaweicloud/.github
 ## 十一、待改进项
 
 - [ ] 按维护者邮箱分发通知（当前统一发管理员）
-- [ ] GitCode `GITCODE_TOKEN` 权限确认（当前 401）
+- [x] GitCode `GITCODE_TOKEN` 权限确认（已修复：token 有效，同步/操作正常）
 - [ ] Issue 趋势图表（环比变化）
 - [ ] 飞书 bot 交互命令（/assign, /priority 等扩展）
