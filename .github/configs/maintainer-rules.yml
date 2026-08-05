@@ -5,28 +5,30 @@ channels:
   - email
 
 # 角色 → GitHub用户名 → 真实邮箱
+# 说明：默认映射到组织管理员 huaweiclouddev；
+# 后续可按实际维护团队（sdk-maintainers / dis-maintainers 等）逐项补充
 maintainers:
   api-maintainer:
-    github: shuangheaven
-    email: "114271379@qq.com"
+    github: huaweiclouddev
+    email: "1993953167@qq.com"
   web-maintainer:
-    github: shuangheaven
-    email: "114271379@qq.com"
+    github: huaweiclouddev
+    email: "1993953167@qq.com"
   devops-maintainer:
-    github: shuangheaven
-    email: "114271379@qq.com"
+    github: huaweiclouddev
+    email: "1993953167@qq.com"
   sdk-maintainer:
-    github: shuangheaven
-    email: "114271379@qq.com"
+    github: huaweiclouddev
+    email: "1993953167@qq.com"
   security-maintainer:
-    github: shuangheaven
-    email: "114271379@qq.com"
+    github: huaweiclouddev
+    email: "1993953167@qq.com"
   performance-maintainer:
-    github: shuangheaven
-    email: "114271379@qq.com"
+    github: huaweiclouddev
+    email: "1993953167@qq.com"
   tech-lead:
-    github: shuangheaven
-    email: "114271379@qq.com"
+    github: huaweiclouddev
+    email: "1993953167@qq.com"
   default-triage:
-    github: shuangheaven
-    email: "114271379@qq.com"
+    github: huaweiclouddev
+    email: "1993953167@qq.com"

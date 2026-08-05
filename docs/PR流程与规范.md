@@ -143,13 +143,13 @@ PR 作者 push 新 commit 后，所有已有 Approve 自动失效，需要重新
 
 ```codeowners
 # 全局默认 reviewer
-* @shuangheaven
+* @huaweiclouddev
 
 # 按目录分配
-/api/          @shuangheaven
-/frontend/     @shuangheaven
-/docs/         @shuangheaven
-/.github/      @shuangheaven
+/api/          @huaweiclouddev
+/frontend/     @huaweiclouddev
+/docs/         @huaweiclouddev
+/.github/      @huaweiclouddev
 ```
 
 创建 PR 时 CODEOWNERS 自动被请求 review。

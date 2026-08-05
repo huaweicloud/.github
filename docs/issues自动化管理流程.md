@@ -122,7 +122,7 @@ status/completed        → 已验证 / 管理员关闭
 
 - 通过 SMTP（QQ 邮箱 `smtp.qq.com:587`）发送
 - HTML 格式：蓝色渐变标题栏、交替行颜色表格、红色标记超时数据
-- 收件人：114271379@qq.com
+- 收件人：1993953167@qq.com
 - 后续可按维护者邮箱映射分发
 
 ### 关键文件
@@ -312,9 +312,9 @@ reports/
 | `FEISHU_ADMIN_OPEN_ID` | 管理员 open_id（ou_f3dxxx） | 组织级 + .github |
 | `SMTP_HOST` | QQ 邮箱 SMTP 服务器（smtp.qq.com） | 组织级 + .github |
 | `SMTP_PORT` | SMTP 端口（587） | 组织级 + .github |
-| `SMTP_USER` | SMTP 账号（114271379@qq.com） | 组织级 + .github |
+| `SMTP_USER` | SMTP 账号（1993953167@qq.com） | 组织级 + .github |
 | `SMTP_PASS` | SMTP 授权码（QQ 邮箱） | 组织级 + .github |
-| `EMAIL_REPORT_TO` | 报表接收邮箱（114271379@qq.com） | 组织级 + .github |
+| `EMAIL_REPORT_TO` | 报表接收邮箱（1993953167@qq.com） | 组织级 + .github |
 | `GITCODE_TOKEN` | GitCode API Token | 组织级 + .github |
 | `GITHUB_TOKEN` | GitHub API | 默认提供 |
 
