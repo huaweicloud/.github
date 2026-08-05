@@ -1,0 +1,67 @@
+name: Monthly Report
+
+on:
+  schedule:
+    - cron: "0 9 1 * *"    # 每月 1 号 UTC 09:00
+  workflow_dispatch:
+
+permissions:
+  issues: read
+  contents: read
+
+jobs:
+  monthly-report:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install pyyaml requests
+
+      - name: Collect GitHub Stats
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_ORG: "huaweicloud"
+          REPORT_TYPE: "monthly"
+        run: |
+          mkdir -p output
+          python .github/scripts/github_stats.py --monthly > output/github_stats.json
+
+      - name: Collect GitCode Stats
+        env:
+          GITCODE_TOKEN: ${{ secrets.GITCODE_TOKEN }}
+          GITCODE_ORG: "huaweicloud"
+        run: python .github/scripts/gitcode_stats.py > output/gitcode_stats.json
+
+      - name: Generate and Send Monthly Report
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_ORG: "huaweicloud"
+          REPORT_TYPE: "monthly"
+          REPORT_FILE: "output/report.md"
+          FEISHU_APP_ID: ${{ secrets.FEISHU_APP_ID }}
+          FEISHU_APP_SECRET: ${{ secrets.FEISHU_APP_SECRET }}
+          FEISHU_ADMIN_OPEN_ID: ${{ secrets.FEISHU_ADMIN_OPEN_ID }}
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASS: ${{ secrets.SMTP_PASS }}
+          EMAIL_REPORT_TO: ${{ secrets.EMAIL_REPORT_TO }}
+        run: python .github/scripts/stats_report.py --type monthly
+
+      - name: Archive Report
+        env:
+          ARCHIVE_TOKEN: ${{ secrets.ARCHIVE_TOKEN }}
+        run: |
+          YEAR=$(date -u +%Y)
+          if [ $(date -u +%-m) -eq 1 ]; then
+            MONTH="$(($(date -u +%Y) - 1))-12"
+          else
+            MONTH="$(date -u +%Y)-$(printf '%02d' $(($(date -u +%-m) - 1)))"
+          fi
+          bash .github/scripts/archive_report.sh "output/report.md" "$YEAR/monthly/$MONTH.md" "Monthly report $MONTH"

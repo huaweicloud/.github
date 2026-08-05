@@ -1,0 +1,23 @@
+name: GitCode API Probe
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run Probe
+        env:
+          GITCODE_TOKEN: ${{ secrets.GITCODE_TOKEN }}
+          GITCODE_ORG: "huaweicloud"
+        run: python3 .github/scripts/gitcode_probe.py
+
+      - name: Cleanup Test Repos
+        env:
+          GITCODE_TOKEN: ${{ secrets.GITCODE_TOKEN }}
+        run: python3 .github/scripts/gitcode_cleanup.py

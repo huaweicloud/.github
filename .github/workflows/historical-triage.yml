@@ -1,0 +1,29 @@
+name: Issue Triage Fallback
+
+on:
+  schedule:
+    - cron: "0 */6 * * *"   # 每 6 小时兜底
+  workflow_dispatch:
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  triage:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Run Historical Triage
+        env:
+          GITHUB_TOKEN: ${{ secrets.ARCHIVE_TOKEN }}
+        run: python .github/scripts/historical_triage.py

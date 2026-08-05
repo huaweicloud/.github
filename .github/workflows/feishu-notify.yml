@@ -1,0 +1,85 @@
+name: Feishu Notify
+
+on:
+  issues:
+    types: [opened, closed, labeled]
+  workflow_dispatch:
+    inputs:
+      event:
+        description: "事件类型"
+        required: true
+        type: string
+        default: "test"
+      subject:
+        description: "通知标题"
+        required: true
+        type: string
+        default: "Test Notification"
+      body:
+        description: "通知正文"
+        required: true
+        type: string
+        default: "飞书通知测试通过！"
+  workflow_call:
+    inputs:
+      event:
+        required: true
+        type: string
+      issue_number:
+        required: true
+        type: number
+      subject:
+        required: true
+        type: string
+      body:
+        required: true
+        type: string
+    secrets:
+      FEISHU_APP_ID:
+        required: true
+      FEISHU_APP_SECRET:
+        required: true
+      FEISHU_ADMIN_OPEN_ID:
+        required: true
+
+permissions:
+  issues: read
+  contents: read
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Send Feishu Notification
+        env:
+          EVENT: ${{ inputs.event || github.event_name }}
+          ISSUE_NUMBER: ${{ inputs.issue_number || github.event.issue.number }}
+          ISSUE_TITLE: ${{ github.event.issue.title || '' }}
+          ISSUE_URL: ${{ github.event.issue.html_url || '' }}
+          SUBJECT: ${{ inputs.subject || '' }}
+          BODY: ${{ inputs.body || '' }}
+          FEISHU_APP_ID: ${{ secrets.FEISHU_APP_ID || secrets.FEISHU_APP_ID }}
+          FEISHU_APP_SECRET: ${{ secrets.FEISHU_APP_SECRET || secrets.FEISHU_APP_SECRET }}
+          FEISHU_ADMIN_OPEN_ID: ${{ secrets.FEISHU_ADMIN_OPEN_ID || secrets.FEISHU_ADMIN_OPEN_ID }}
+        run: python .github/scripts/feishu_notify.py
+
+      - name: Send Email Notification
+        env:
+          SUBJECT: ${{ inputs.subject || '' }}
+          BODY: ${{ inputs.body || '' }}
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASS: ${{ secrets.SMTP_PASS }}
+          EMAIL_REPORT_TO: ${{ secrets.EMAIL_REPORT_TO }}
+        run: python .github/scripts/email_notify.py

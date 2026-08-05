@@ -1,0 +1,46 @@
+name: SLA Daily Report
+
+on:
+  schedule:
+    - cron: "0 8 * * 1-5"   # 工作日 UTC 08:00
+  workflow_dispatch:
+
+permissions:
+  issues: read
+  contents: read
+
+jobs:
+  sla-daily:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install pyyaml requests
+
+      - name: Generate SLA Daily Report
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_ORG: "huaweicloud"
+          FEISHU_APP_ID: ${{ secrets.FEISHU_APP_ID }}
+          FEISHU_APP_SECRET: ${{ secrets.FEISHU_APP_SECRET }}
+          FEISHU_ADMIN_OPEN_ID: ${{ secrets.FEISHU_ADMIN_OPEN_ID }}
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASS: ${{ secrets.SMTP_PASS }}
+          EMAIL_REPORT_TO: ${{ secrets.EMAIL_REPORT_TO }}
+        run: python .github/scripts/sla_monitor.py --report
+
+      - name: Archive Report
+        env:
+          ARCHIVE_TOKEN: ${{ secrets.ARCHIVE_TOKEN }}
+        run: |
+          DATE=$(date -u +%Y-%m-%d)
+          YEAR=$(date -u +%Y)
+          bash .github/scripts/archive_report.sh "output/sla_report.md" "$YEAR/sla/$DATE.md" "SLA daily report $DATE"
