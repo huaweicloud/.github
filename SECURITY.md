@@ -1,42 +1,42 @@
-# Security Policy
+# 安全策略
 
-> **Language:** English | [中文](./SECURITY.zh.md)
+> **语言切换：** [English](./SECURITY.en.md) | 中文
 
-## Supported Versions
+## 支持版本
 
-| Version | Supported          |
+| 版本 | 支持状态 |
 | ------- | ------------------ |
-| main    | ✅ Active development |
-| latest  | ✅ Full support       |
+| main    | ✅ 活跃开发 |
+| latest  | ✅ 完全支持 |
 
-## Reporting a Vulnerability
+## 报告安全漏洞
 
-We take security vulnerabilities seriously. If you discover a security vulnerability in this project, please report it responsibly.
+我们认真对待安全漏洞。如果您在本项目中发现了安全漏洞，请负责任地报告。
 
-### How to Report
+### 如何报告
 
-**Please do NOT report security vulnerabilities through public GitHub Issues.**
+**请勿通过公开的 GitHub Issues 报告安全漏洞。**
 
-Instead, please report security vulnerabilities through GitHub's built-in [Security Advisory feature](https://github.com/huaweicloud/huaweicloud/security/advisories/new):
+请通过 GitHub 内置的[安全公告功能](https://github.com/huaweicloud/huaweicloud/security/advisories/new)报告：
 
-1. Go to the repository's **Security** tab
-2. Click **"Report a vulnerability"**
-3. Fill in the details of the vulnerability
+1. 进入仓库的 **Security** 标签页
+2. 点击 **"Report a vulnerability"**
+3. 填写漏洞详情
 
-### What to Include
+### 需要包含的内容
 
-- Description of the vulnerability
-- Steps to reproduce
-- Potential impact
-- Suggested fix (if any)
+- 漏洞描述
+- 复现步骤
+- 潜在影响
+- 建议修复方案（如有）
 
-### Response Timeline
+### 响应时间线
 
-- **Acknowledgment**: Within 48 hours
-- **Initial Assessment**: Within 5 business days
-- **Status Updates**: Every 7 days until resolved
+- **确认收到**：48 小时内
+- **初步评估**：5 个工作日内
+- **状态更新**：每 7 天更新一次，直至解决
 
-### Disclosure Policy
+### 披露政策
 
-- Please allow us a reasonable time to fix the issue before public disclosure
-- We will credit you in the security advisory (unless you prefer to remain anonymous)
+- 请给我们合理的时间修复问题，再公开披露
+- 我们会在安全公告中注明您的贡献（除非您希望匿名）
