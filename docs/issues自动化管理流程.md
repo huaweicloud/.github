@@ -29,6 +29,14 @@ Issue 创建（GitHub / GitCode）
 - Issue Bot（`actions/issue-bot/`）在 Issue 创建时自动运行（已有，含飞书审批通知、斜杠命令）
 - `triage-issue.yml` 通过 `issue-bot` Action 扩展分类能力
 
+### 通知仓库负责人
+新建 Issue 时，issue-bot 会自动通知该仓库的负责人（来自建仓时配置的通知 secrets）：
+- **@ 提及**：评论中 @ Owner / Maintainer 用户名（`OWNER_USERS` / `MAINTAINER_USERS`）
+- **邮件通知**：发送邮件给 `OWNER_EMAILS` / `MAINTAINER_EMAILS`
+- **飞书卡片**：发送卡片给 `FEISHU_OPEN_IDS`（未配置时发给组织管理员）
+
+> 通知配置在建仓表单中填写，由 `repo_creator.py` 写入新仓库 secrets。
+
 ### 自动打标签规则
 
 | 触发条件 | 标签 | 说明 |
