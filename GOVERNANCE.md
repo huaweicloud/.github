@@ -80,7 +80,7 @@
 | L1-4 | 默认分支 | 必须为 `main` | **警告** |
 | L1-5 | Issues 开启 | `has_issues=true` | **阻断** |
 | L1-6 | 非归档 | `archived=false` | — |
-| L1-7 | Topics 标签 | 至少 3 个 Topics 标签 | 建议 |
+| L1-7 | Topics 标签 | 至少 3 个 Topics 标签（每个匹配 `[a-z0-9][a-z0-9.-]*`） | **阻断** |
 
 > **阻断项**：不满足则仓库不应存在于组织中。
 > **警告项**：不满足需在 30 天内整改。
@@ -145,8 +145,10 @@
 - [ ] .github/workflows/status-transition.yml（产品级）
 - [ ] .github/workflows/sync-to-gitcode.yml（产品级）
 - [ ] 安全告警 + 自动修复（Dependabot alerts/fixes）
+- [ ] 仓库级 Secrets（BOT_TOKEN / GITCODE_TOKEN，供 triage / GitCode 同步使用）
+- [ ] 分支保护（仅 public 仓库：2 人 Approve + Code Owner Review + strict CI）
 - [ ] 仓库描述（Description）
-- [ ] 至少 3 个 Topics 标签
+- [ ] 至少 3 个 Topics 标签（必填）
 - [ ] 默认分支 `main`
 - [ ] Issues 开启
 - [ ] Squash merge 开启（默认）
@@ -189,13 +191,16 @@
 
 ### 4.3 许可证要求
 
-| 项目类型 | 推荐 License |
-|----------|-------------|
+| 项目类型 | 许可证 |
+|----------|--------|
 | SDK / 库 | Apache-2.0 |
 | 工具 / CLI | Apache-2.0 或 MIT |
 | 示例 / Demo | Apache-2.0 |
-| 数据集 | CC-BY-4.0 |
-| 文档 | CC-BY-4.0 |
+| 文档 / 数据集 | 强制 Apache-2.0 |
+| 内部配置 | 强制 Apache-2.0 |
+
+> **许可证策略与建仓流程一致**：仅产品项目（SDK/Action/Provider/框架/Exporter/IoT）由用户选择（Apache-2.0 / MIT / BSD-3-Clause），示例/文档/内部统一强制 Apache-2.0。详见 [建仓流程文档 §3.5](./docs/建仓流程文档.md)。
+> CC-BY-4.0 可用于独立数据集仓库（非建仓流程创建），需组织管理员批准。
 
 **GPL 使用限制：** GPL 代码不得混入 Apache-2.0 项目，除非经过法务审查确认许可兼容性。现有 GPL 仓库需逐个评估许可迁移方案。
 
@@ -381,7 +386,7 @@
 | `.github/ISSUE_TEMPLATE/config.yml` | Issue 配置 |
 | `.github/PULL_REQUEST_TEMPLATE.md` | PR 模板 |
 | `.github/dependabot.yml` | 依赖更新配置 |
-| `.github/workflows/stale.yml` | 过期 Issue/PR 自动清理 |
+| `.github/workflows/stale-manager.yml` | 过期 Issue/PR 自动清理 |
 | `.github/workflows/governance-audit.yml` | 月度治理巡检 |
 
 ---
