@@ -37,11 +37,11 @@ This project and everyone participating in it is governed by the [Code of Conduc
 ## Development Setup
 
 ```bash
-git clone https://github.com/huaweicloud/huaweicloud.git
-cd huaweicloud
-npm install
-npm run dev
+git clone https://github.com/huaweicloud/.github.git
+cd .github
 ```
+
+This is the configuration center repository, mainly containing governance docs, workflows, scripts, and actions. No runtime dependencies required; to test scripts locally, see each script's `--dry` / `--help` usage.
 
 ## Style Guidelines
 

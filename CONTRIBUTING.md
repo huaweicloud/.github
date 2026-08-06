@@ -37,11 +37,11 @@
 ## 开发环境搭建
 
 ```bash
-git clone https://github.com/huaweicloud/huaweicloud.git
-cd huaweicloud
-npm install
-npm run dev
+git clone https://github.com/huaweicloud/.github.git
+cd .github
 ```
+
+本项目为配置中心，主要包含治理文档、Workflows、Scripts、Actions。无需安装运行依赖；如需本地测试脚本，请参考各脚本的 `--dry` / `--help` 用法。
 
 ## 代码风格
 
