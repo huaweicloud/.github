@@ -32,7 +32,7 @@ HUAWEI CLOUD 组织托管华为云面向开发者的开源项目，涵盖 **SDK 
 
 ## 贡献指南 / Contributing
 
-- 参与讨论 / *Discussions*：[Discussions](https://github.com/orgs/huaweicloud/discussions)
+- 参与讨论 / *Discussions*：[Discussions](https://github.com/huaweicloud/.github/discussions)
 - 报告问题 / *Report issues*：在对应仓库提交 [Bug Report](https://github.com/huaweicloud/.github/issues/new/choose)
 - 治理规范 / *Governance*：[GOVERNANCE.md](https://github.com/huaweicloud/.github/blob/main/GOVERNANCE.md)
 
