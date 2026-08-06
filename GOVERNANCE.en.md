@@ -54,7 +54,7 @@ This policy establishes unified governance standards for all repositories in the
 | **Active repository** | A repository that is not archived |
 | **Core repository** | Repository with Stars ≥ 50 |
 | **Notable repository** | Repository with Stars ≥ 20 |
-| **Zombie repository** | Repository with no git push for 180 consecutive days |
+| **Zombie repository** | Repository with no git push for 365 consecutive days |
 | **Single-maintainer repository** | Repository with only 1 write-permission member |
 | **OSI-approved license** | A license in the OSI-approved open source license list |
 
@@ -216,7 +216,7 @@ Archival should be initiated if **any** of the following is met:
 
 | Condition | Description |
 |------|------|
-| No git push for 180 consecutive days | May have stopped maintenance |
+| No git push for 365 consecutive days | May have stopped maintenance |
 | Maintainer confirms stopping maintenance | Voluntary declaration |
 | Superseded by another repository | Feature merged/migrated |
 | Unfixed Critical vulnerability >90 days | Security responsibility |
@@ -237,7 +237,7 @@ Archival should be initiated if **any** of the following is met:
 Deletion may be considered if **all** of the following are met:
 
 - Stars = 0 and Forks = 0
-- No activity for over 365 days
+- No activity for over 730 days
 - Maintainer confirms deletion
 - Organization admin approves
 
