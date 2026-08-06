@@ -108,6 +108,74 @@ def send_feishu_dm(open_id, content, app_id, app_secret):
         print(f"Feishu send exception: {e}", file=sys.stderr)
         return False
 
+def notify_owners(issue, repo, title, body):
+    """通知仓库负责人：飞书卡片（可选）+ 邮件（可选）"""
+    app_id = os.environ.get("FEISHU_APP_ID", "")
+    app_secret = os.environ.get("FEISHU_APP_SECRET", "")
+    owner_emails = [e.strip() for e in os.environ.get("OWNER_EMAILS", "").split(",") if e.strip()]
+    maintainer_emails = [e.strip() for e in os.environ.get("MAINTAINER_EMAILS", "").split(",") if e.strip()]
+    feishu_open_ids = [o.strip() for o in os.environ.get("FEISHU_OPEN_IDS", "").split(",") if o.strip()]
+    admin_open_id = os.environ.get("FEISHU_ADMIN_OPEN_ID", "")
+
+    issue_number = issue.get("number", 0)
+    issue_url = issue.get("html_url", "")
+    author = issue.get("user", {}).get("login", "")
+
+    # 邮件通知
+    if owner_emails or maintainer_emails:
+        try:
+            import smtplib
+            from email.mime.text import MIMEText
+            from email.header import Header
+            from email.mime.multipart import MIMEMultipart
+            smtp_host = os.environ.get("SMTP_HOST", "smtp.qq.com")
+            smtp_port = int(os.environ.get("SMTP_PORT", "587"))
+            smtp_user = os.environ.get("SMTP_USER", "")
+            smtp_pass = os.environ.get("SMTP_PASS", "")
+            to_emails = owner_emails + maintainer_emails
+            if smtp_user and smtp_pass and to_emails:
+                msg = MIMEMultipart("alternative")
+                msg["From"] = smtp_user
+                msg["To"] = ", ".join(to_emails)
+                msg["Subject"] = Header(f"[{repo}] 新 Issue #{issue_number}: {title}", "utf-8")
+                html = f"<p>仓库 <b>{repo}</b> 收到新 Issue：</p><p><a href='{issue_url}'>#{issue_number} {title}</a></p><p>提交人：@{author}</p><p>{body[:500]}</p>"
+                msg.attach(MIMEText(html, "html", "utf-8"))
+                server = smtplib.SMTP(smtp_host, smtp_port, timeout=30)
+                server.starttls()
+                server.login(smtp_user, smtp_pass)
+                server.sendmail(smtp_user, to_emails, msg.as_string())
+                server.quit()
+                print(f"Email notified owners: {to_emails}")
+        except Exception as e:
+            print(f"Email notify error: {e}", file=sys.stderr)
+
+    # 飞书通知
+    targets = []
+    if feishu_open_ids:
+        targets = feishu_open_ids
+    elif admin_open_id:
+        targets = [admin_open_id]
+    if app_id and app_secret and targets:
+        card = {
+            "config": {"wide_screen_mode": True},
+            "header": {"title": {"tag": "plain_text", "content": "📌 新 Issue 通知"}, "template": "blue"},
+            "elements": [
+                {"tag": "markdown", "content": f"仓库 **{repo}** 收到新 Issue"},
+                {"tag": "div", "fields": [
+                    {"is_short": True, "text": {"tag": "lark_md", "content": f"**编号**\n#{issue_number}"}},
+                    {"is_short": True, "text": {"tag": "lark_md", "content": f"**提交人**\n@{author}"}},
+                ]},
+                {"tag": "markdown", "content": f"**标题：**{title}"},
+                {"tag": "hr"},
+                {"tag": "markdown", "content": f"{body[:300]}"},
+                {"tag": "action", "actions": [
+                    {"tag": "button", "text": {"tag": "plain_text", "content": "查看 Issue"}, "type": "primary", "url": issue_url},
+                ]},
+            ]
+        }
+        for oid in targets:
+            send_feishu_dm(oid, card, app_id, app_secret)
+
 def notify_repo_request(issue, repo_full):
     app_id = os.environ.get("FEISHU_APP_ID", "")
     app_secret = os.environ.get("FEISHU_APP_SECRET", "")
@@ -305,9 +373,20 @@ def handle_issue_opened(event, token):
     if classification["area"]:
         parts.append(f"- 领域: `{classification['area']}`\n")
     parts.append("\n可用 `/help` 查看管理命令。\n")
+
+    # @ 仓库负责人
+    owners = [u.strip() for u in os.environ.get("OWNER_USERS", "").split(",") if u.strip()]
+    maintainers = [u.strip() for u in os.environ.get("MAINTAINER_USERS", "").split(",") if u.strip()]
+    notify_users = [u for u in owners + maintainers if u and u != author]
+    if notify_users:
+        parts.append(f"\n🔔 已通知仓库负责人：{' '.join(f'@{u}' for u in notify_users)}\n")
+
     parts.append("\n<sub>issue-bot v1.0 · triage</sub>")
     
     github_api("POST", f"/repos/{repo}/issues/{issue_number}/comments", token, {"body": "".join(parts)})
+
+    # 飞书/邮件通知负责人
+    notify_owners(issue, repo, title, body)
     
     if is_first_time_contributor(author, repo, token):
         github_api("POST", f"/repos/{repo}/issues/{issue_number}/comments", token,
