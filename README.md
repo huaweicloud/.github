@@ -1,5 +1,7 @@
 # huaweicloud/.github
 
+> **语言切换：** [English](./README.en.md) | 中文
+
 HUAWEI CLOUD 组织治理配置中心。本仓库承载组织级治理基础设施，供组织内所有仓库复用。
 
 ## 目录结构

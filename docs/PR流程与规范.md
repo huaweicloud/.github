@@ -1,5 +1,7 @@
 # huaweicloud PR 流程与规范
 
+> **语言切换：** [English](./PR流程与规范.en.md) | 中文
+
 ## 完整流程
 
 ```

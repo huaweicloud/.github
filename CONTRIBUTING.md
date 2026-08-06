@@ -1,5 +1,7 @@
 # Contributing to huaweicloud
 
+> **Language:** English | [中文](./CONTRIBUTING.zh.md)
+
 First off, thank you for considering contributing to huaweicloud! 🎉
 
 ## Code of Conduct

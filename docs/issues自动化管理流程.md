@@ -1,5 +1,7 @@
 # huaweicloud Issues 自动化管理流程
 
+> **语言切换：** [English](./issues自动化管理流程.en.md) | 中文
+
 ## 完整流程
 
 ```

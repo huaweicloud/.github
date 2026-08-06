@@ -1,5 +1,7 @@
 # huaweicloud 组织开源治理规范
 
+> **语言切换：** [English](./GOVERNANCE.en.md) | 中文
+>
 > 版本: v1.0
 > 生效日期: 2026-08-03
 > 适用范围: huaweicloud GitHub 组织下所有仓库
