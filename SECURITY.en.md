@@ -17,7 +17,7 @@ We take security vulnerabilities seriously. If you discover a security vulnerabi
 
 **Please do NOT report security vulnerabilities through public GitHub Issues.**
 
-Instead, please report security vulnerabilities through GitHub's built-in [Security Advisory feature](https://github.com/huaweicloud/huaweicloud/security/advisories/new):
+Instead, please report security vulnerabilities through GitHub's built-in [Security Advisory feature](https://github.com/huaweicloud/.github/security/advisories/new):
 
 1. Go to the repository's **Security** tab
 2. Click **"Report a vulnerability"**

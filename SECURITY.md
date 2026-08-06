@@ -17,7 +17,7 @@
 
 **请勿通过公开的 GitHub Issues 报告安全漏洞。**
 
-请通过 GitHub 内置的[安全公告功能](https://github.com/huaweicloud/huaweicloud/security/advisories/new)报告：
+请通过 GitHub 内置的[安全公告功能](https://github.com/huaweicloud/.github/security/advisories/new)报告：
 
 1. 进入仓库的 **Security** 标签页
 2. 点击 **"Report a vulnerability"**
