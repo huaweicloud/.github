@@ -38,5 +38,5 @@ HUAWEI CLOUD 组织托管华为云面向开发者的开源项目，涵盖 **SDK 
 
 ## 联系我们 / Contact
 
-- 社区治理 / *Community governance*：[repository-requests](https://github.com/huaweicloud/repository-requests)
+- 社区治理 / *Community governance*：[社区治理规范 / *Governance*](https://github.com/huaweicloud/.github/blob/main/GOVERNANCE.md)
 - 配置中心 / *Config center*：[.github](https://github.com/huaweicloud/.github)
