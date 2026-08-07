@@ -170,15 +170,15 @@ def classify_issue(title, body, labels):
     result = {"type": None, "priority": None, "area": None}
     
     if any(w in text for w in ['bug', 'error', 'crash', 'broken', 'fail', 'exception', 'traceback', 'fix']):
-        result["type"] = "bug"
+        result["type"] = "type/bug"
     elif any(w in text for w in ['feature', 'request', 'add', 'support', 'enhance', 'improve', 'new']):
-        result["type"] = "enhancement"
+        result["type"] = "type/feature"
     elif any(w in text for w in ['question', 'how to', 'how do', 'help', 'usage', 'example']):
-        result["type"] = "question"
+        result["type"] = "type/question"
     elif any(w in text for w in ['doc', 'documentation', 'readme', 'guide', 'tutorial']):
-        result["type"] = "documentation"
+        result["type"] = "type/documentation"
     elif any(w in text for w in ['security', 'vulnerability', 'cve', 'xss', 'injection']):
-        result["type"] = "bug"
+        result["type"] = "type/bug"
         result["priority"] = "priority/critical"
     
     if not result["priority"]:
@@ -190,9 +190,9 @@ def classify_issue(title, body, labels):
             result["priority"] = "priority/medium"
         elif any(w in text for w in ['low', 'minor', 'nice to have', 'cosmetic']):
             result["priority"] = "priority/low"
-        elif result["type"] == "bug":
+        elif result["type"] == "type/bug":
             result["priority"] = "priority/high"
-        elif result["type"] == "enhancement":
+        elif result["type"] == "type/feature":
             result["priority"] = "priority/medium"
         else:
             result["priority"] = "priority/medium"
@@ -200,11 +200,11 @@ def classify_issue(title, body, labels):
     if any(w in text for w in ['sdk', 'api', 'client', 'library']):
         result["area"] = "area/sdk"
     elif any(w in text for w in ['ui', 'frontend', 'web', 'dashboard', 'interface']):
-        result["area"] = "area/frontend"
+        result["area"] = "area/web"
     elif any(w in text for w in ['ci', 'cd', 'pipeline', 'workflow', 'deploy', 'build', 'test']):
         result["area"] = "area/ci-cd"
     elif any(w in text for w in ['doc', 'documentation', 'readme', 'guide']):
-        result["area"] = "area/docs"
+        result["area"] = "area/documentation"
     elif any(w in text for w in ['security', 'auth', 'permission', 'token']):
         result["area"] = "area/security"
     return result
