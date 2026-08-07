@@ -46,6 +46,10 @@ Issue 创建（GitHub / GitCode）
 | `area/api` | @api-maintainer |
 | `area/web` | @web-maintainer |
 | `area/ci-cd` | @devops-maintainer |
+| `area/sdk` | @sdk-maintainer |
+| `area/security` | @security-maintainer |
+| `area/performance` | @performance-maintainer |
+| `area/database` | @database-maintainer |
 | `type/bug` + `priority/critical` | @tech-lead |
 | 无匹配 | @default-triage |
 
@@ -371,7 +375,7 @@ gh workflow run gitcode-stale.yml -R huaweicloud/.github
 
 ## 十、标签体系
 
-### GitHub 标准标签
+### 类型标签 `type/*`
 
 | 标签 | 用途 | GitCode 对应 |
 |------|------|:-----------:|
@@ -379,24 +383,55 @@ gh workflow run gitcode-stale.yml -R huaweicloud/.github
 | `type/feature` | 功能请求 | ✅ |
 | `type/documentation` | 文档相关 | ✅ |
 | `type/question` | 问题咨询 | ✅ |
+
+### 优先级标签 `priority/*`
+
+| 标签 | 用途 | GitCode 对应 |
+|------|------|:-----------:|
 | `priority/critical` | 紧急 | ✅ |
 | `priority/high` | 高 | ✅ |
 | `priority/medium` | 中 | ✅ |
 | `priority/low` | 低 | ✅ |
+
+### 状态标签 `status/*`
+
+| 标签 | 用途 | GitCode 对应 |
+|------|------|:-----------:|
 | `status/pending` | 待处理 | - |
 | `status/triaged` | 已分类 | - |
 | `status/in-progress` | 进行中 | - |
 | `status/resolved` | 已解决 | - |
 | `status/completed` | 已完成 | - |
 | `status/stale` | 即将过期 | ✅ |
+| `status/blocked` | 阻塞 | - |
 
-### 自动化专用标签
+### 领域标签 `area/*`
+
+| 标签 | 用途 |
+|------|------|
+| `area/api` | API / 接口 |
+| `area/web` | Web / 前端 |
+| `area/ci-cd` | CI/CD / 流水线 |
+| `area/sdk` | SDK / 客户端 |
+| `area/security` | 安全 |
+| `area/performance` | 性能 |
+| `area/database` | 数据库 / 存储 |
+
+### SLA / 自动化标签
 
 | 标签 | 用途 |
 |------|------|
 | `sla/breach` | SLA 已违约 |
 | `sla/warning` | SLA 即将违约 |
 | `escalation` | 已升级 |
+| `agent/triaged` | 机器人已分类 |
+
+### 社区标签
+
+| 标签 | 用途 |
+|------|------|
+| `good first issue` | 新手友好 |
+| `help wanted` | 寻求帮助 |
 
 ---
 

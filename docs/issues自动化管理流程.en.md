@@ -46,6 +46,10 @@ Issue created (GitHub / GitCode)
 | `area/api` | @api-maintainer |
 | `area/web` | @web-maintainer |
 | `area/ci-cd` | @devops-maintainer |
+| `area/sdk` | @sdk-maintainer |
+| `area/security` | @security-maintainer |
+| `area/performance` | @performance-maintainer |
+| `area/database` | @database-maintainer |
 | `type/bug` + `priority/critical` | @tech-lead |
 | No match | @default-triage |
 
@@ -350,7 +354,7 @@ gh workflow run gitcode-stale.yml -R huaweicloud/.github
 
 ## 10. Label System
 
-### GitHub Standard Labels
+### Type Labels `type/*`
 
 | Label | Purpose | GitCode |
 |------|------|:-----------:|
@@ -358,24 +362,55 @@ gh workflow run gitcode-stale.yml -R huaweicloud/.github
 | `type/feature` | Feature request | ✅ |
 | `type/documentation` | Documentation | ✅ |
 | `type/question` | Question | ✅ |
+
+### Priority Labels `priority/*`
+
+| Label | Purpose | GitCode |
+|------|------|:-----------:|
 | `priority/critical` | Urgent | ✅ |
 | `priority/high` | High | ✅ |
 | `priority/medium` | Medium | ✅ |
 | `priority/low` | Low | ✅ |
+
+### Status Labels `status/*`
+
+| Label | Purpose | GitCode |
+|------|------|:-----------:|
 | `status/pending` | Pending | - |
 | `status/triaged` | Triaged | - |
 | `status/in-progress` | In progress | - |
 | `status/resolved` | Resolved | - |
 | `status/completed` | Completed | - |
 | `status/stale` | About to stale | ✅ |
+| `status/blocked` | Blocked | - |
 
-### Automation Labels
+### Area Labels `area/*`
+
+| Label | Purpose |
+|------|------|
+| `area/api` | API |
+| `area/web` | Web / frontend |
+| `area/ci-cd` | CI/CD |
+| `area/sdk` | SDK |
+| `area/security` | Security |
+| `area/performance` | Performance |
+| `area/database` | Database / storage |
+
+### SLA / Automation Labels
 
 | Label | Purpose |
 |------|------|
 | `sla/breach` | SLA breached |
 | `sla/warning` | SLA about to breach |
 | `escalation` | Escalated |
+| `agent/triaged` | Bot triaged |
+
+### Community Labels
+
+| Label | Purpose |
+|------|------|
+| `good first issue` | Beginner friendly |
+| `help wanted` | Seeking help |
 
 ---
 
