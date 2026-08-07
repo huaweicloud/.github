@@ -77,6 +77,7 @@ jobs:
         shell: bash
 
       - name: Run Governance Upgrade (auto-fill L2/L3 configs)
+        if: false  # 暂不自动执行（避免批量改存量仓库）；手动启用时改为 true
         env:
           GITHUB_TOKEN: ${{ secrets.BOT_TOKEN }}
           GITHUB_ORG: "huaweicloud"
@@ -84,7 +85,7 @@ jobs:
         run: python .github/scripts/governance_upgrade.py
 
       - name: Notify Upgrades via Feishu
-        if: success()
+        if: false  # 随升级步骤一起禁用
         env:
           FEISHU_APP_ID: ${{ secrets.FEISHU_APP_ID }}
           FEISHU_APP_SECRET: ${{ secrets.FEISHU_APP_SECRET }}
