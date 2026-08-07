@@ -83,6 +83,7 @@
 | L1-5 | Issues 开启 | `has_issues=true` | **阻断** |
 | L1-6 | 非归档 | `archived=false` | — |
 | L1-7 | Topics 标签 | 至少 3 个 Topics 标签（每个匹配 `[a-z0-9][a-z0-9.-]*`） | **阻断** |
+| L1-8 | Issue 标签体系 | 必须包含 `type/*`、`priority/*`、`status/*` 标签（自动化依赖） | **阻断** |
 
 > **阻断项**：不满足则仓库不应存在于组织中。
 > **警告项**：不满足需在 30 天内整改。
@@ -111,12 +112,11 @@
 |:----:|--------|------|:--------:|
 | L3-1 | CI/CD | lint + test 自动化工作流 | **阻断** |
 | L3-2 | CodeQL | 代码安全扫描已启用 | **阻断** |
-| L3-3 | Issue 标签体系 | type/*, priority/*, status/* 标签 | **警告** |
-| L3-4 | Issue 响应 SLA | 首次响应 ≤7 天，关闭 ≤90 天 | **警告** |
-| L3-5 | SemVer | 版本号遵循语义化版本规范 | **警告** |
-| L3-6 | Changelog | 存在 CHANGELOG.md 或 Release Notes | 建议 |
-| L3-7 | Discussions | GitHub Discussions 已启用 | 建议 |
-| L3-8 | good-first-issue | 至少 1 个适合新贡献者的 Issue | 建议 |
+| L3-3 | Issue 响应 SLA | 首次响应 ≤7 天，关闭 ≤90 天 | **警告** |
+| L3-4 | SemVer | 版本号遵循语义化版本规范 | **警告** |
+| L3-5 | Changelog | 存在 CHANGELOG.md 或 Release Notes | 建议 |
+| L3-6 | Discussions | GitHub Discussions 已启用 | 建议 |
+| L3-7 | good-first-issue | 至少 1 个适合新贡献者的 Issue | 建议 |
 
 ---
 
@@ -334,6 +334,7 @@
 [ ] README.md（项目简介 + 安装 + 使用示例）
 [ ] 仓库描述（Description）
 [ ] Topics 标签（≥3个）
+[ ] Issue 标签体系（type/* + priority/* + status/* + area/* 等）
 [ ] 默认分支 = main
 [ ] Issues 已开启
 [ ] .github/ISSUE_TEMPLATE/（bug_report + feature_request + config）

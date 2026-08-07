@@ -83,6 +83,7 @@ Repositories are divided into three tiers by influence (Stars), with progressive
 | L1-5 | Issues enabled | `has_issues=true` | **Blocking** |
 | L1-6 | Not archived | `archived=false` | — |
 | L1-7 | Topics tags | At least 3 Topics tags (each matching `[a-z0-9][a-z0-9.-]*`) | **Blocking** |
+| L1-8 | Issue labels | Must include `type/*`, `priority/*`, `status/*` labels (required by automation) | **Blocking** |
 
 > **Blocking**: repository should not exist in the organization if not satisfied.
 > **Warning**: must be remediated within 30 days.
@@ -111,12 +112,11 @@ In addition to L2:
 |:----:|--------|------|:--------:|
 | L3-1 | CI/CD | lint + test automation workflows | **Blocking** |
 | L3-2 | CodeQL | Code security scanning enabled | **Blocking** |
-| L3-3 | Issue labels | type/*, priority/*, status/* labels | **Warning** |
-| L3-4 | Issue response SLA | First response ≤7 days, close ≤90 days | **Warning** |
-| L3-5 | SemVer | Versioning follows semantic versioning | **Warning** |
-| L3-6 | Changelog | CHANGELOG.md or Release Notes exists | Suggestion |
-| L3-7 | Discussions | GitHub Discussions enabled | Suggestion |
-| L3-8 | good-first-issue | At least 1 Issue suitable for new contributors | Suggestion |
+| L3-3 | Issue response SLA | First response ≤7 days, close ≤90 days | **Warning** |
+| L3-4 | SemVer | Versioning follows semantic versioning | **Warning** |
+| L3-5 | Changelog | CHANGELOG.md or Release Notes exists | Suggestion |
+| L3-6 | Discussions | GitHub Discussions enabled | Suggestion |
+| L3-7 | good-first-issue | At least 1 Issue suitable for new contributors | Suggestion |
 
 ---
 
@@ -334,6 +334,7 @@ Exemptions must be clearly marked in the repository README or .github/GOVERNANCE
 [ ] README.md (project intro + installation + usage example)
 [ ] Repository description
 [ ] Topics tags (≥3)
+[ ] Issue label system (type/* + priority/* + status/* + area/* etc.)
 [ ] Default branch = main
 [ ] Issues enabled
 [ ] .github/ISSUE_TEMPLATE/ (bug_report + feature_request + config)
