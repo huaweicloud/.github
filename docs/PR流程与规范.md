@@ -30,8 +30,8 @@ New Pull Request (Fixes #N)
 │   ├── 新 commit 后旧 Approve 失效              │
 │   └── Code Owner 必须 Review                  │
 │                                              │
-│ ※ 分支保护仅新 public 仓库自动启用；            │
-│   private 及存量仓库无此强制                   │
+│ ※ 分支保护在 L2（Stars ≥ 20）时由治理脚本自动启用；│
+│   L1 新仓库及存量仓库默认无此强制                 │
 └─────────────────────────────────────────────┘
     ↓
 CI 全绿 + 2 Approve + 对话 Resolve
@@ -47,8 +47,9 @@ Issue 自动关闭 → status/resolved
 
 ### 分支保护（Branch Protection）
 
-> **适用范围**：仅**新建的 public 仓库**在建仓时自动启用（`repo_creator.py` 的 `setup_branch_protection`）。
-> - **private 仓库**：受 GitHub Free 计划限制，无法配置分支保护，建仓时自动跳过。
+> **适用范围**：分支保护属 **L2 标准**，由治理脚本 `governance_upgrade.py` 在仓库 **Stars ≥ 20** 时自动启用（仅 public）。
+> - **L1 新仓库**：建仓时不配置分支保护（符合 L1 准入门槛）。
+> - **private 仓库**：受 GitHub Free 计划限制，无法配置分支保护，自动豁免 L2-1。
 > - **现有存量仓库**：未批量补配，如需启用请在仓库 Settings → Branches 手动配置。
 
 | 配置项 | 值 | 说明 |
@@ -222,8 +223,8 @@ git commit -S -m "feat: xxx"
 
 ## 七、不能合并的情况
 
-> 以下 CI / 分支保护相关限制，在**分支保护启用的仓库**（新建 public 仓库）强制执行；
-> private 及未启用分支保护的存量仓库仅 CI 会拦截，Approve/Code Owner 等需人工遵守。
+> 以下 CI / 分支保护相关限制，在**分支保护启用的仓库**（L2，Stars ≥ 20，由治理脚本启用）强制执行；
+> private 及未启用分支保护的仓库（L1/存量）仅 CI 会拦截，Approve/Code Owner 等需人工遵守。
 
 | 原因 | 表现 |
 |------|------|

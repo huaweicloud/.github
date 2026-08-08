@@ -30,9 +30,9 @@ New Pull Request (Fixes #N)
 │   ├── old Approvals invalidated on new commit│
 │   └── Code Owner must review                 │
 │                                              │
-│ ※ Branch protection auto-enabled only for    │
-│   new public repos; private & existing repos │
-│   have no such enforcement                   │
+│ ※ Branch protection auto-enabled at L2        │
+│   (Stars ≥ 20) by governance script; L1 new   │
+│   repos & existing repos have no enforcement  │
 └─────────────────────────────────────────────┘
     ↓
 CI green + 2 Approvals + conversations resolved
@@ -48,8 +48,9 @@ Issue auto-closes → status/resolved
 
 ### Branch Protection
 
-> **Scope**: auto-enabled on **new public repositories** at creation (`setup_branch_protection` in `repo_creator.py`).
-> - **Private repos**: Free plan limitation, cannot configure branch protection; auto-skipped.
+> **Scope**: Branch protection is an **L2 standard**, auto-enabled by the governance script `governance_upgrade.py` when a repo reaches **Stars ≥ 20** (public only).
+> - **L1 new repos**: no branch protection at creation (matches L1 admission threshold).
+> - **Private repos**: Free plan limitation, cannot configure branch protection; auto-exempt from L2-1.
 > - **Existing repos**: not batch-configured; enable manually in Settings → Branches if needed.
 
 | Config | Value | Description |
@@ -223,7 +224,7 @@ git commit -S -m "feat: xxx"
 
 ## 7. When PR Cannot Be Merged
 
-> Branch-protection-related restrictions (Approvals/Code Owner/strict) are enforced on **branch-protected repos** (new public repos); private and non-protected repos only have CI blocking, other rules are manual.
+> Branch-protection-related restrictions (Approvals/Code Owner/strict) are enforced on **branch-protected repos** (L2, Stars ≥ 20, enabled by the governance script); private and non-protected repos (L1/existing) only have CI blocking, other rules are manual.
 
 | Reason | Manifestation |
 |------|------|
