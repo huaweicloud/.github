@@ -185,9 +185,8 @@ def main():
                     added_files.append(dest)
                     print(f"[L2] {name}: added {dest}")
 
-        # L2 分支保护（public）
-        if not private and not file_exists(name, "README.md"):
-            # 用 API 检查保护
+        # L2 分支保护（public 仓库，检查是否已有保护，无则补）
+        if not private:
             prot = api("GET", f"/repos/{ORG}/{name}/branches/{default_branch}/protection")
             if not prot:
                 if apply_branch_protection(name, private):
