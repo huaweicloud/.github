@@ -356,11 +356,11 @@ def handle_unlabel(args, issue_number, repo, token, commenter):
 
 def handle_retriage(args, issue_number, repo, token, commenter):
     """Force re-triage: remove agent/triaged then re-run classification."""
+    github_api("DELETE", f"/repos/{repo}/issues/{issue_number}/labels/agent%2Ftriaged", token)
     issue = github_api("GET", f"/repos/{repo}/issues/{issue_number}", token)
     if not isinstance(issue, dict) or "labels" not in issue:
         return "Could not fetch issue for re-triage."
-    github_api("DELETE", f"/repos/{repo}/issues/{issue_number}/labels/agent%2Ftriaged", token)
-    handle_issue_opened({"issue": issue, "repository": {"full_name": repo}}, token)
+    handle_issue_opened({"issue": issue, "repository": {"full_name": repo}}, token, force=True)
     return "Re-triage complete. Review the classification comment above."
 
 def handle_close(args, issue_number, repo, token, commenter):
@@ -382,7 +382,7 @@ def handle_help(args, issue_number, repo, token, commenter):
 - `/help` — Show this help
 <sub>issue-bot v1.0</sub>"""
 
-def handle_issue_opened(event, token):
+def handle_issue_opened(event, token, force=False):
     issue = event["issue"]
     repo = event["repository"]["full_name"]
     issue_number = issue["number"]
@@ -391,7 +391,7 @@ def handle_issue_opened(event, token):
     author = issue.get("user", {}).get("login", "")
     existing_labels = [l["name"] for l in issue.get("labels", [])]
     
-    if "agent/triaged" in existing_labels:
+    if "agent/triaged" in existing_labels and not force:
         print(f"Issue #{issue_number} already triaged, skipping")
         return
 
