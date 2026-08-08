@@ -27,7 +27,7 @@ jobs:
           config_path: ".github-repo/configs/triage-rules.yml"
 
       - name: Mark as triaged
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         with:
           script: |
             const { data: issue } = await github.rest.issues.get({
