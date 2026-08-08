@@ -428,7 +428,8 @@ def handle_issue_opened(event, token, force=False):
     config = load_triage_config()
     classification = classify_issue(title, body, existing_labels, config)
     print(f"Classification: {json.dumps(classification, ensure_ascii=False)}")
-    
+
+    # 分类标签替换而非追加：移除旧 type/priority/area，保留其他（status/agent/社区）
     labels_to_add = ["agent/triaged"]
     if classification["type"]:
         labels_to_add.append(classification["type"])
@@ -436,7 +437,9 @@ def handle_issue_opened(event, token, force=False):
         labels_to_add.append(classification["priority"])
     if classification["area"]:
         labels_to_add.append(classification["area"])
-    github_api("POST", f"/repos/{repo}/issues/{issue_number}/labels", token, {"labels": labels_to_add})
+    keep = [l for l in existing_labels if not (l.startswith("type/") or l.startswith("priority/") or l.startswith("area/"))]
+    final_labels = keep + labels_to_add
+    github_api("PUT", f"/repos/{repo}/issues/{issue_number}/labels", token, {"labels": final_labels})
     
     parts = ["### 🤖 Issue Bot\n", "**分类结果：**\n"]
     if classification["type"]:
