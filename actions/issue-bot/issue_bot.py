@@ -17,6 +17,7 @@ import time
 import glob
 import urllib.request
 import urllib.error
+from urllib.parse import quote
 import hashlib
 import hmac
 from datetime import datetime, timezone
@@ -322,7 +323,8 @@ def handle_priority(args, issue_number, repo, token, commenter):
     if isinstance(issue, dict) and "labels" in issue:
         for lbl in issue["labels"]:
             if lbl["name"].startswith("priority/"):
-                github_api("DELETE", f"/repos/{repo}/issues/{issue_number}/labels/{lbl['name']}", token)
+                encoded = quote(lbl["name"], safe="")
+                github_api("DELETE", f"/repos/{repo}/issues/{issue_number}/labels/{encoded}", token)
     github_api("POST", f"/repos/{repo}/issues/{issue_number}/labels", token, {"labels": [label]})
     return f"Priority set to `{label}`."
 
@@ -339,7 +341,8 @@ def handle_unlabel(args, issue_number, repo, token, commenter):
         return "Usage: `/unlabel label1, label2`"
     removed, missing = [], []
     for label in labels:
-        result = github_api("DELETE", f"/repos/{repo}/issues/{issue_number}/labels/{label}", token)
+        encoded = quote(label, safe="")
+        result = github_api("DELETE", f"/repos/{repo}/issues/{issue_number}/labels/{encoded}", token)
         if isinstance(result, dict) and result.get("status_code") == 404:
             missing.append(label)
         else:
