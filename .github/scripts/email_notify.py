@@ -197,7 +197,7 @@ def build_email_html(subject, body):
     </div>
     <div class="footer">
         huaweicloud Issue Bot · 此报告由自动化系统生成<br>
-        请联系管理员：刘菲（工号：00978084，邮箱：liufei268@huawei.com）；张爽（工号：60077038，邮箱：zhangshuang77@h-partners.com）
+        请联系管理员：刘菲（liufei268@huawei.com）；张爽（zhangshuang77@h-partners.com）
     </div>
 </div>
 </body>

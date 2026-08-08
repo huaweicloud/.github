@@ -85,6 +85,8 @@ Repositories are divided into three tiers by influence (Stars), with progressive
 | L1-7 | Topics tags | At least 3 Topics tags (each matching `[a-z0-9][a-z0-9.-]*`) | **Blocking** |
 | L1-8 | Issue labels | Must include `type/*`, `priority/*`, `status/*` labels (required by automation) | **Blocking** |
 
+> **L1-8 exemption note**: Labels are injected by repository tier at creation time — product tier: 28 labels (including `status/*`); sample tier: 8 labels (`type/*` + `priority/*` only, exempt from `status/*` since no status automation is installed); docs/internal tiers: no label set (no Issue automation dependency, exempt from L1-8). See the repo creation matrix §3.3 in the onboarding doc.
+
 > **Blocking**: repository should not exist in the organization if not satisfied.
 > **Warning**: must be remediated within 30 days.
 > **Suggestion**: encouraged, not mandatory.
@@ -327,31 +329,33 @@ Exemptions must be clearly marked in the repository README or .github/GOVERNANCE
 
 ### Appendix A: Checklists (quick reference)
 
-#### New Repository Checklist
+#### New Repository Checklist (per L1 admission threshold)
 
 ```
 [ ] LICENSE file (Apache-2.0)
 [ ] README.md (project intro + installation + usage example)
 [ ] Repository description
 [ ] Topics tags (≥3)
-[ ] Issue label system (type/* + priority/* + status/* + area/* etc.)
+[ ] Issue label system (type/* + priority/* + status/*, see note below)
 [ ] Default branch = main
 [ ] Issues enabled
-[ ] .github/ISSUE_TEMPLATE/ (bug_report + feature_request + config)
-[ ] .github/PULL_REQUEST_TEMPLATE.md
-[ ] .github/dependabot.yml
 ```
+
+> **Note**: New repositories follow the **L1 admission threshold** (L1-1 ~ L1-8; L1-6 not-archived is satisfied at creation).
+> Labels are injected by tier: product 28 (incl. `status/*`); sample 8 (`type/*` + `priority/*` only, exempt from `status/*` since no status automation); docs/internal no label set (no Issue automation, exempt from L1-8).
+> Product-tier repos additionally get CI / dependabot / Issue+PR templates / branch protection per the §3.3 matrix in the onboarding doc (see §3.2).
 
 #### Existing Repository Upgrade to L2 Checklist
 
 ```
-[ ] Branch protection (require PR + 1 review)
+[ ] Branch protection (require PR + 2 reviews)
 [ ] Add ≥1 additional write-permission member
 [ ] SECURITY.md
 [ ] CONTRIBUTING.md
 [ ] CODE_OF_CONDUCT.md
 [ ] Enable Dependabot
 [ ] PULL_REQUEST_TEMPLATE.md
+[ ] Issue templates (bug_report + feature_request)
 ```
 
 ### Appendix B: License Selection Guide

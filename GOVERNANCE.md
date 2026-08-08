@@ -85,6 +85,8 @@
 | L1-7 | Topics 标签 | 至少 3 个 Topics 标签（每个匹配 `[a-z0-9][a-z0-9.-]*`） | **阻断** |
 | L1-8 | Issue 标签体系 | 必须包含 `type/*`、`priority/*`、`status/*` 标签（自动化依赖） | **阻断** |
 
+> **L1-8 豁免注**：标签体系按建仓级别注入——产品级 28 个（含 `status/*`）；示例级 8 个（仅 `type/*` + `priority/*`，无状态自动化依赖，豁免 `status/*`）；文档/内部级无标签体系（无 Issue 自动化依赖，豁免 L1-8）。详见建仓流程文档 §3.3 矩阵。
+
 > **阻断项**：不满足则仓库不应存在于组织中。
 > **警告项**：不满足需在 30 天内整改。
 > **建议项**：鼓励满足，不强制。
@@ -327,31 +329,33 @@
 
 ### 附录 A：检查清单（快速参考）
 
-#### 新建仓库检查清单
+#### 新建仓库检查清单（按 L1 准入门槛）
 
 ```
 [ ] LICENSE 文件（Apache-2.0）
 [ ] README.md（项目简介 + 安装 + 使用示例）
 [ ] 仓库描述（Description）
 [ ] Topics 标签（≥3个）
-[ ] Issue 标签体系（type/* + priority/* + status/* + area/* 等）
+[ ] Issue 标签体系（type/* + priority/* + status/*，见下方注）
 [ ] 默认分支 = main
 [ ] Issues 已开启
-[ ] .github/ISSUE_TEMPLATE/（bug_report + feature_request + config）
-[ ] .github/PULL_REQUEST_TEMPLATE.md
-[ ] .github/dependabot.yml
 ```
+
+> **注**：新建仓库按 **L1 准入门槛**执行（L1-1 ~ L1-8，L1-6 非归档在建仓时天然满足）。
+> 标签体系按级别注入：产品级 28 个（含 `status/*`）；示例级 8 个（仅 `type/*` + `priority/*`，无状态自动化依赖故豁免 `status/*`）；文档/内部级无标签体系（无 Issue 自动化依赖，豁免 L1-8）。
+> 产品级在 L1 基础上按建仓流程文档 §3.3 矩阵额外注入 CI / dependabot / Issue+PR 模板 / 分支保护等增强项（详见 §3.2）。
 
 #### 存量仓库升级到 L2 检查清单
 
 ```
-[ ] 分支保护（require PR + 1 review）
+[ ] 分支保护（require PR + 2 review）
 [ ] 添加≥1名额外写权限成员
 [ ] SECURITY.md
 [ ] CONTRIBUTING.md
 [ ] CODE_OF_CONDUCT.md
 [ ] 启用 Dependabot
 [ ] PULL_REQUEST_TEMPLATE.md
+[ ] Issue 模板（bug_report + feature_request）
 ```
 
 ### 附录 B：许可证选择指南

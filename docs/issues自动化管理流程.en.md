@@ -122,7 +122,7 @@ All events send both Feishu cards and HTML emails:
 - Sent via Feishu Open API as DM card messages
 - Reports: segmented structured cards, tables rendered with `lark_md`
 - Alerts: color-coded (red=breach, orange=warning, blue=created, green=closed)
-- Admin: ou_f3d92a9ef16eba823ed80e8107fb3763
+- Admin: Zhang Shuang
 
 ### Email Notifications
 
@@ -418,5 +418,6 @@ gh workflow run gitcode-stale.yml -R huaweicloud/.github
 
 - [ ] Per-maintainer email distribution (currently all to admin)
 - [x] GitCode `GITCODE_TOKEN` permission confirmed (fixed: token valid, sync/ops normal)
+- [x] GitHub Issue slash commands (/assign, /priority, /label, /unlabel, /retriage, /close, /reopen)
 - [ ] Issue trend charts (MoM)
 - [ ] Feishu bot interactive commands (/assign, /priority etc.)

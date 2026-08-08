@@ -122,7 +122,7 @@ status/completed        → 已验证 / 管理员关闭
 - 通过飞书 Open API 发送 DM 卡片消息
 - 报表：分段结构化卡片，表格用 `lark_md` 渲染
 - 告警：颜色区分（红=违约, 橙=预警, 蓝=新建, 绿=关闭）
-- 管理员：ou_f3d92a9ef16eba823ed80e8107fb3763（张爽）
+- 管理员：张爽
 
 ### 邮件通知
 
@@ -439,5 +439,6 @@ gh workflow run gitcode-stale.yml -R huaweicloud/.github
 
 - [ ] 按维护者邮箱分发通知（当前统一发管理员）
 - [x] GitCode `GITCODE_TOKEN` 权限确认（已修复：token 有效，同步/操作正常）
+- [x] GitHub Issue 斜杠命令（/assign, /priority, /label, /unlabel, /retriage, /close, /reopen）
 - [ ] Issue 趋势图表（环比变化）
 - [ ] 飞书 bot 交互命令（/assign, /priority 等扩展）
