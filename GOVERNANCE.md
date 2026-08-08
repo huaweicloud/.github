@@ -150,12 +150,13 @@
 - [ ] .github/workflows/sync-to-gitcode.yml（产品级）
 - [ ] 安全告警 + 自动修复（Dependabot alerts/fixes）
 - [ ] 仓库级 Secrets（BOT_TOKEN / GITCODE_TOKEN，供 triage / GitCode 同步使用）
-- [ ] 分支保护（仅 public 仓库：2 人 Approve + Code Owner Review + strict CI）
 - [ ] 仓库描述（Description）
 - [ ] 至少 3 个 Topics 标签（必填）
 - [ ] 默认分支 `main`
 - [ ] Issues 开启
 - [ ] Squash merge 开启（默认）
+
+> **分支保护不在建仓时配置**：新建仓库按 L1 准入执行（不含分支保护）。分支保护属 L2 标准（L2-1），由 `governance_upgrade.py` 在仓库 Stars ≥ 20 时自动启用（仅 public，2 人 Approve + Code Owner Review + strict CI）。
 
 ### 3.3 命名规范
 
@@ -343,7 +344,7 @@
 
 > **注**：新建仓库按 **L1 准入门槛**执行（L1-1 ~ L1-8，L1-6 非归档在建仓时天然满足）。
 > 标签体系按级别注入：产品级 28 个（含 `status/*`）；示例级 8 个（仅 `type/*` + `priority/*`，无状态自动化依赖故豁免 `status/*`）；文档/内部级无标签体系（无 Issue 自动化依赖，豁免 L1-8）。
-> 产品级在 L1 基础上按建仓流程文档 §3.3 矩阵额外注入 CI / dependabot / Issue+PR 模板 / 分支保护等增强项（详见 §3.2）。
+> 产品级在 L1 基础上按建仓流程文档 §3.3 矩阵额外注入 CI / dependabot / Issue+PR 模板等增强项（详见 §3.2）。分支保护仅由 `governance_upgrade.py` 在 L2 时启用。
 
 #### 存量仓库升级到 L2 检查清单
 

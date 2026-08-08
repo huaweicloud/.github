@@ -150,12 +150,13 @@ New repositories should automatically include the following configs (auto-inject
 - [ ] .github/workflows/sync-to-gitcode.yml (product tier)
 - [ ] Security alerts + automated fixes (Dependabot alerts/fixes)
 - [ ] Repository-level Secrets (BOT_TOKEN / GITCODE_TOKEN, for triage / GitCode sync)
-- [ ] Branch protection (public repos only: 2 Approvals + Code Owner Review + strict CI)
 - [ ] Repository description
 - [ ] At least 3 Topics tags (required)
 - [ ] Default branch `main`
 - [ ] Issues enabled
 - [ ] Squash merge enabled (default)
+
+> **Branch protection is NOT configured at creation**: new repos follow the L1 admission threshold (no branch protection). Branch protection is an L2 requirement (L2-1), auto-enabled by `governance_upgrade.py` once a repo reaches Stars ≥ 20 (public only, 2 Approvals + Code Owner Review + strict CI).
 
 ### 3.3 Naming Conventions
 
@@ -343,7 +344,7 @@ Exemptions must be clearly marked in the repository README or .github/GOVERNANCE
 
 > **Note**: New repositories follow the **L1 admission threshold** (L1-1 ~ L1-8; L1-6 not-archived is satisfied at creation).
 > Labels are injected by tier: product 28 (incl. `status/*`); sample 8 (`type/*` + `priority/*` only, exempt from `status/*` since no status automation); docs/internal no label set (no Issue automation, exempt from L1-8).
-> Product-tier repos additionally get CI / dependabot / Issue+PR templates / branch protection per the §3.3 matrix in the onboarding doc (see §3.2).
+> Product-tier repos additionally get CI / dependabot / Issue+PR templates per the §3.3 matrix in the onboarding doc (see §3.2). Branch protection is applied only at L2 by `governance_upgrade.py`.
 
 #### Existing Repository Upgrade to L2 Checklist
 
