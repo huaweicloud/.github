@@ -390,6 +390,11 @@ def handle_retriage(args, issue_number, repo, token, commenter):
 
 def handle_close(args, issue_number, repo, token, commenter):
     github_api("PATCH", f"/repos/{repo}/issues/{issue_number}", token, {"state": "closed", "state_reason": "completed"})
+    issue = github_api("GET", f"/repos/{repo}/issues/{issue_number}", token)
+    if isinstance(issue, dict) and "labels" in issue:
+        labels = [l["name"] for l in issue["labels"]]
+        new_labels = [l for l in labels if not l.startswith("status/")] + ["status/completed"]
+        github_api("PUT", f"/repos/{repo}/issues/{issue_number}/labels", token, {"labels": new_labels})
     return "Issue closed."
 
 def handle_reopen(args, issue_number, repo, token, commenter):
