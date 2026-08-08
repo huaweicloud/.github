@@ -328,10 +328,35 @@ def handle_priority(args, issue_number, repo, token, commenter):
     github_api("POST", f"/repos/{repo}/issues/{issue_number}/labels", token, {"labels": [label]})
     return f"Priority set to `{label}`."
 
+def get_repo_labels(repo, token):
+    """Fetch all labels that already exist in the repo (paginated)."""
+    labels = set()
+    page = 1
+    while page <= 10:
+        result = github_api("GET", f"/repos/{repo}/labels?per_page=100&page={page}", token)
+        if not isinstance(result, list):
+            break
+        if not result:
+            break
+        labels.update(l["name"] for l in result if isinstance(l, dict) and "name" in l)
+        if len(result) < 100:
+            break
+        page += 1
+    return labels
+
 def handle_label(args, issue_number, repo, token, commenter):
     labels = [l.strip() for l in args.split(',') if l.strip()]
     if not labels:
         return "Usage: `/label label1, label2`"
+    existing = get_repo_labels(repo, token)
+    unknown = [l for l in labels if l not in existing]
+    known = [l for l in labels if l in existing]
+    if unknown:
+        hint = f"仅允许仓库中已存在的标签（新增标签不会自动创建）。不存在的标签: {', '.join(f'`{l}`' for l in unknown)}"
+        if known:
+            github_api("POST", f"/repos/{repo}/issues/{issue_number}/labels", token, {"labels": known})
+            return f"Added label(s): {', '.join(f'`{l}`' for l in known)}. {hint}"
+        return hint
     github_api("POST", f"/repos/{repo}/issues/{issue_number}/labels", token, {"labels": labels})
     return f"Added label(s): {', '.join(f'`{l}`' for l in labels)}."
 
