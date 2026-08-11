@@ -69,7 +69,7 @@ jobs:
         run: python .github/scripts/notify_upgrade.py
       - name: Create Audit Issue
         if: always()
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         with:
           script: |
             const date = new Date();
