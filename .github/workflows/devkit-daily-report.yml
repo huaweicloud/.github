@@ -2,7 +2,7 @@ name: DevKit Daily Report
 
 on:
   schedule:
-    - cron: "0 14 * * *"   # 每天 UTC 14:00（北京时间 22:00）
+    - cron: "0 1 * * *"   # 每天 UTC 01:00（北京时间 09:00）
   workflow_dispatch:
 
 permissions:
@@ -28,6 +28,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.BOT_TOKEN }}
           REPO: "huaweicloud/huaweicloud-devkit"
           NPM_PACKAGE: "huaweicloud-devkit"
+          FEISHU_WEBHOOK: ${{ secrets.FEISHU_WEBHOOK }}
           FEISHU_APP_ID: ${{ secrets.FEISHU_APP_ID }}
           FEISHU_APP_SECRET: ${{ secrets.FEISHU_APP_SECRET }}
           FEISHU_ADMIN_OPEN_ID: ${{ secrets.FEISHU_ADMIN_OPEN_ID }}
