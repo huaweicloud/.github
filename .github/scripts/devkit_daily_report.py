@@ -81,6 +81,72 @@ def get_stars():
     return total, stars7
 
 
+def get_forks():
+    """Forks：当前总数 + 近7日新增（用 /forks 的 created_at）"""
+    repo = gh_get(f"/repos/{REPO}")
+    if not repo:
+        return 0, 0
+    total = repo.get("forks_count", 0)
+    since = datetime.now(timezone.utc) - timedelta(days=7)
+    forks7 = 0
+    page = 1
+    while page <= 10:
+        data = gh_get(f"/repos/{REPO}/forks?per_page=100&page={page}&sort=newest")
+        if not isinstance(data, list) or not data:
+            break
+        for item in data:
+            created = item.get("created_at", "")
+            if created:
+                try:
+                    t = datetime.fromisoformat(created.replace("Z", "+00:00"))
+                    if t >= since:
+                        forks7 += 1
+                except ValueError:
+                    pass
+        if len(data) < 100:
+            break
+        page += 1
+    return total, forks7
+
+
+def get_watchers():
+    """Watchers：关注/订阅数"""
+    repo = gh_get(f"/repos/{REPO}")
+    if not repo:
+        return 0
+    return repo.get("subscribers_count", 0)
+
+
+def get_open_prs():
+    """打开 PR 数"""
+    data = gh_get(f"/repos/{REPO}/pulls?state=open&per_page=1")
+    if isinstance(data, list):
+        return len(data)
+    return 0
+
+
+def get_open_issues():
+    """打开 Issue 数（排除 PR）"""
+    data = gh_get(f"/repos/{REPO}/issues?state=open&per_page=1")
+    if isinstance(data, list):
+        return len(data)
+    return 0
+
+
+def get_issues_week():
+    """Issue 近7日新增、近7日闭环"""
+    since = (datetime.now(timezone.utc) - timedelta(days=7)).strftime("%Y-%m-%d")
+    opened = 0
+    closed = 0
+    data = gh_get(f"/search/issues?q=repo:{REPO}+is:issue+created:>{since}&per_page=1")
+    if data and isinstance(data, dict):
+        opened = data.get("total_count", 0)
+    data2 = gh_get(f"/search/issues?q=repo:{REPO}+is:issue+closed:>{since}&per_page=1")
+    if data2 and isinstance(data2, dict):
+        closed = data2.get("total_count", 0)
+    return opened, closed
+
+
 def get_issues_today():
     """Issue：今日新增、今日闭环"""
     today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
@@ -104,7 +170,12 @@ def build_report():
     today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
     today_dl, week_dl = get_npm_downloads()
     stars, stars7 = get_stars()
+    forks, forks7 = get_forks()
+    watchers = get_watchers()
+    open_prs = get_open_prs()
+    open_issues = get_open_issues()
     opened, closed = get_issues_today()
+    opened_w, closed_w = get_issues_week()
 
     lines = [
         f"# huaweicloud-devkit 运营日报（{today}）",
@@ -113,16 +184,21 @@ def build_report():
         f"- 今日下载：**{today_dl}**",
         f"- 近 7 日下载：**{week_dl}**",
         "",
-        "### 星星数（GitHub）",
-        f"- 当前 stars：**{stars}**",
-        f"- 近 7 日新增：**{stars7}**",
+        "### 社区活跃（GitHub）",
+        f"- 当前 stars：**{stars}**（近7日 +{stars7}）",
+        f"- 当前 forks：**{forks}**（近7日 +{forks7}）",
+        f"- Watchers：**{watchers}**",
+        "",
+        "### 待处理事项",
+        f"- 打开 PR：**{open_prs}**",
+        f"- 打开 Issue：**{open_issues}**",
         "",
         "### Issue 处理",
-        f"- 今日新增：**{opened}**",
-        f"- 今日闭环：**{closed}**",
+        f"- 今日新增：**{opened}** / 今日闭环：**{closed}**",
+        f"- 近 7 日新增：**{opened_w}** / 近 7 日闭环：**{closed_w}**",
         "",
     ]
-    return "\n".join(lines), today_dl, week_dl, stars, stars7, opened, closed
+    return "\n".join(lines), today_dl, week_dl, stars, stars7, forks, forks7, watchers, open_prs, open_issues, opened, closed
 
 
 def main():
