@@ -16,46 +16,9 @@ REPO = os.environ.get("REPO", "huaweicloud/huaweicloud-devkit")
 NPM_PKG = os.environ.get("NPM_PACKAGE", "huaweicloud-devkit")
 GITHUB_TOKEN = os.environ.get("GITHUB_TOKEN", "")
 GITHUB_API = "https://api.github.com"
-FEISHU_WEBHOOK = os.environ.get("FEISHU_WEBHOOK", "")
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from feishu_notify import send_notification
-
-
-def send_feishu_webhook(subject, body):
-    """通过飞书群机器人 Webhook 发送卡片到群"""
-    if not FEISHU_WEBHOOK:
-        print("FEISHU_WEBHOOK not set, skip webhook", file=sys.stderr)
-        return False
-    card = {
-        "config": {"wide_screen_mode": True},
-        "header": {
-            "title": {"tag": "plain_text", "content": subject},
-            "template": "blue",
-        },
-        "elements": [
-            {"tag": "markdown", "content": body},
-        ],
-    }
-    payload = {"msg_type": "interactive", "card": card}
-    try:
-        req = urllib.request.Request(
-            FEISHU_WEBHOOK,
-            data=json.dumps(payload, ensure_ascii=False).encode("utf-8"),
-            headers={"Content-Type": "application/json"},
-            method="POST",
-        )
-        with urllib.request.urlopen(req, timeout=15) as resp:
-            result = json.loads(resp.read())
-            ok = result.get("code") == 0 or result.get("StatusCode") == 0
-            if ok:
-                print("Feishu webhook sent successfully")
-                return True
-            print(f"Feishu webhook failed: {result}", file=sys.stderr)
-            return False
-    except Exception as e:
-        print(f"Feishu webhook error: {e}", file=sys.stderr)
-        return False
 
 
 def gh_get(path, accept=None):
@@ -155,19 +118,33 @@ def get_watchers():
 
 
 def get_open_prs():
-    """打开 PR 数"""
-    data = gh_get(f"/repos/{REPO}/pulls?state=open&per_page=1")
-    if isinstance(data, list):
-        return len(data)
-    return 0
+    """打开 PR 数（分页拉全）"""
+    total = 0
+    page = 1
+    while page <= 10:
+        data = gh_get(f"/repos/{REPO}/pulls?state=open&per_page=100&page={page}")
+        if not isinstance(data, list) or not data:
+            break
+        total += len(data)
+        if len(data) < 100:
+            break
+        page += 1
+    return total
 
 
 def get_open_issues():
-    """打开 Issue 数（排除 PR）"""
-    data = gh_get(f"/repos/{REPO}/issues?state=open&per_page=1")
-    if isinstance(data, list):
-        return len(data)
-    return 0
+    """打开 Issue 数（排除 PR，分页拉全）"""
+    total = 0
+    page = 1
+    while page <= 10:
+        data = gh_get(f"/repos/{REPO}/issues?state=open&per_page=100&page={page}")
+        if not isinstance(data, list) or not data:
+            break
+        total += len([i for i in data if "pull_request" not in i])
+        if len(data) < 100:
+            break
+        page += 1
+    return total
 
 
 def get_issues_week():
@@ -241,11 +218,7 @@ def build_report():
 def main():
     report, *_ = build_report()
     subject = f"📊 huaweicloud-devkit 运营日报"
-    ok = False
-    if FEISHU_WEBHOOK:
-        ok = send_feishu_webhook(subject, report)
-    if not ok:
-        ok = send_notification(subject, report, event_type="report.daily")
+    ok = send_notification(subject, report, event_type="report.daily")
     print("Feishu report sent:", ok)
     print(report)
 

@@ -28,7 +28,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.BOT_TOKEN }}
           REPO: "huaweicloud/huaweicloud-devkit"
           NPM_PACKAGE: "huaweicloud-devkit"
-          FEISHU_WEBHOOK: ${{ secrets.FEISHU_WEBHOOK }}
           FEISHU_APP_ID: ${{ secrets.FEISHU_APP_ID }}
           FEISHU_APP_SECRET: ${{ secrets.FEISHU_APP_SECRET }}
           FEISHU_ADMIN_OPEN_ID: ${{ secrets.FEISHU_ADMIN_OPEN_ID }}
