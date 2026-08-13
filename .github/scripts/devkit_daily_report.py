@@ -7,6 +7,7 @@
 """
 import json
 import os
+import re
 import sys
 import urllib.request
 import urllib.error
@@ -154,6 +155,42 @@ def get_watchers():
     return repo.get("subscribers_count", 0)
 
 
+def get_dependents():
+    """依赖此仓库的外部仓库数（GitHub network/dependents 页面解析）。
+
+    GitHub 无 dependents 公开 API，只能解析网页。
+    返回值为外部依赖仓库数量（不含自身）。抓取失败返回 None。
+    """
+    owner, name = REPO.split("/", 1)
+    url = f"https://github.com/{owner}/{name}/network/dependents"
+    try:
+        req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"})
+        with urllib.request.urlopen(req, timeout=30) as resp:
+            html = resp.read().decode("utf-8", errors="ignore")
+        # 页面中所有仓库链接，排除自身及非仓库路径
+        links = re.findall(r'href="/([^/"]+)/([^/"]+)"', html)
+        self_repo = f"{owner}/{name}"
+        external = set()
+        for o, r in links:
+            full = f"{o}/{r}"
+            if full == self_repo:
+                continue
+            if o and r and o not in (
+                "login", "account", "settings", "assets", "features", "enterprise",
+                "pricing", "topics", "collections", "trending", "sponsors", "marketplace",
+                "explore", "events", "notifications", "new", "orgs", "search", "apps",
+                "site", "security", "readme", "copilot", "mobile", "team", "about",
+                "resources", "campaigns", "industries", "sponsor", "app", "settings",
+            ):
+                external.add(full)
+        # 排除页面导航里的无关仓库路径（network 相关）
+        external = {x for x in external if "/" in x and x != self_repo}
+        return len(external)
+    except Exception as e:
+        print(f"dependents fetch error: {e}", file=sys.stderr)
+        return None
+
+
 def get_open_prs():
     """打开 PR 数（分页拉全）"""
     total = 0
@@ -223,22 +260,26 @@ def build_report():
     stars, stars7 = get_stars()
     forks, forks7 = get_forks()
     watchers = get_watchers()
+    dependents = get_dependents()
     open_prs = get_open_prs()
     open_issues = get_open_issues()
     opened, closed = get_issues_today()
     opened_w, closed_w = get_issues_week()
 
+    dep_text = f"- Dependents（被依赖仓库数）：**{dependents}**" if dependents is not None else "- Dependents：N/A"
+
     lines = [
         f"# huaweicloud-devkit 运营日报（{today}）",
         "",
         "### 下载量（npm）",
-        f"- 今日下载：**{today_dl}**",
+        f"- 今日下载：**{today_dl}**（npm 口径，含 CI/镜像拉取，有延迟）",
         f"- 近 7 日下载：**{week_dl}**",
         "",
         "### 社区活跃（GitHub）",
         f"- 当前 stars：**{stars}**（近7日 +{stars7}）",
         f"- 当前 forks：**{forks}**（近7日 +{forks7}）",
         f"- Watchers：**{watchers}**",
+        dep_text,
         "",
         "### 待处理事项",
         f"- 打开 PR：**{open_prs}**",
@@ -249,7 +290,7 @@ def build_report():
         f"- 近 7 日新增：**{opened_w}** / 近 7 日闭环：**{closed_w}**",
         "",
     ]
-    return "\n".join(lines), today_dl, week_dl, stars, stars7, forks, forks7, watchers, open_prs, open_issues, opened, closed
+    return "\n".join(lines), today_dl, week_dl, stars, stars7, forks, forks7, watchers, dependents, open_prs, open_issues, opened, closed
 
 
 def main():
