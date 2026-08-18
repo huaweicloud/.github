@@ -128,7 +128,7 @@ status/completed        → 已验证 / 管理员关闭
 
 - 通过 SMTP（QQ 邮箱 `smtp.qq.com:587`）发送
 - HTML 格式：蓝色渐变标题栏、交替行颜色表格、红色标记超时数据
-- 收件人：1993953167@qq.com
+- 收件人：admin@example.com（配置于组织级 secret `EMAIL_REPORT_TO`）
 - 后续可按维护者邮箱映射分发
 
 ### 关键文件
@@ -327,9 +327,9 @@ reports/
 | `FEISHU_ADMIN_OPEN_ID` | 管理员 open_id（ou_f3dxxx） | 组织级 + .github 仓库级 |
 | `SMTP_HOST` | QQ 邮箱 SMTP 服务器（smtp.qq.com） | 组织级 + .github 仓库级 |
 | `SMTP_PORT` | SMTP 端口（587） | 组织级 + .github 仓库级 |
-| `SMTP_USER` | SMTP 账号（1993953167@qq.com） | 组织级 + .github 仓库级 |
+| `SMTP_USER` | SMTP 账号（admin@example.com，存于 secret） | 组织级 + .github 仓库级 |
 | `SMTP_PASS` | SMTP 授权码（QQ 邮箱） | 组织级 + .github 仓库级 |
-| `EMAIL_REPORT_TO` | 报表接收邮箱（1993953167@qq.com） | 组织级 + .github 仓库级 |
+| `EMAIL_REPORT_TO` | 报表接收邮箱（admin@example.com，存于 secret） | 组织级 + .github 仓库级 |
 | `GITCODE_TOKEN` | GitCode API Token | 组织级 + .github 仓库级 |
 | `GITCODE_USERNAME` | GitCode 用户名 | 组织级 + .github 仓库级 |
 | `ARCHIVE_TOKEN` | 报表归档（推送 reports 仓库） | 组织级 + .github 仓库级 |

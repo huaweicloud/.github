@@ -2,8 +2,6 @@
 
 # 检测模式（q 用于 GitHub code search：org:{org} <query>）
 queries:
-  - label: "邮箱 (1993953167@qq.com)"
-    query: "1993953167"
   - label: "GitHub PAT (ghp_)"
     query: "ghp_"
   - label: "GitHub OAuth (gho_)"
@@ -89,10 +87,4 @@ allow_repos:
 
 # 已知存量泄露：已登记、待修复；命中时仅列入"存量"清单，不告警
 # 修复完成后应从本清单移除
-known_issues:
-  - repo: "huaweicloud/.github"
-    paths:
-      - "docs/issues自动化管理流程.md"
-      - "docs/issues自动化管理流程.en.md"
-      - ".github/configs/maintainer-rules.yml"
-    note: "邮箱 1993953167@qq.com（SMTP/收件人）公开，待脱敏"
+known_issues: []

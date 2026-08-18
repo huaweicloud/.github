@@ -128,7 +128,7 @@ All events send both Feishu cards and HTML emails:
 
 - Sent via SMTP (QQ `smtp.qq.com:587`)
 - HTML format: blue gradient header, alternating row tables, red timeout highlights
-- Recipient: 1993953167@qq.com
+- Recipient: admin@example.com (configured in org-level secret `EMAIL_REPORT_TO`)
 - Can be extended to per-maintainer email distribution
 
 ### Key Files

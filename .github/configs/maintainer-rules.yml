@@ -6,29 +6,30 @@ channels:
 
 # 角色 → GitHub用户名 → 真实邮箱
 # 说明：默认映射到组织管理员 huaweiclouddev；
+# 邮箱为占位符（脱敏），实际发送时由组织级 secret EMAIL_REPORT_TO 兜底；
 # 后续可按实际维护团队（sdk-maintainers / dis-maintainers 等）逐项补充
 maintainers:
   api-maintainer:
     github: huaweiclouddev
-    email: "1993953167@qq.com"
+    email: "admin@example.com"
   web-maintainer:
     github: huaweiclouddev
-    email: "1993953167@qq.com"
+    email: "admin@example.com"
   devops-maintainer:
     github: huaweiclouddev
-    email: "1993953167@qq.com"
+    email: "admin@example.com"
   sdk-maintainer:
     github: huaweiclouddev
-    email: "1993953167@qq.com"
+    email: "admin@example.com"
   security-maintainer:
     github: huaweiclouddev
-    email: "1993953167@qq.com"
+    email: "admin@example.com"
   performance-maintainer:
     github: huaweiclouddev
-    email: "1993953167@qq.com"
+    email: "admin@example.com"
   tech-lead:
     github: huaweiclouddev
-    email: "1993953167@qq.com"
+    email: "admin@example.com"
   default-triage:
     github: huaweiclouddev
-    email: "1993953167@qq.com"
+    email: "admin@example.com"
