@@ -90,6 +90,18 @@ def get_npm_downloads():
     return today_dl, week_dl
 
 
+def get_npm_total_downloads():
+    """npm 累计下载量（自 2015-01-10 起全时段）"""
+    today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    url = f"https://api.npmjs.org/downloads/point/2015-01-10:{today}/{NPM_PKG}"
+    try:
+        req = urllib.request.Request(url, headers={"Accept": "application/json"})
+        with urllib.request.urlopen(req, timeout=30) as resp:
+            return json.loads(resp.read()).get("downloads", 0)
+    except Exception:
+        return 0
+
+
 def get_stars():
     """GitHub stars：当前总数 + 近7日新增（用 starred_at 时间戳）"""
     repo = gh_get(f"/repos/{REPO}")
@@ -221,6 +233,61 @@ def get_open_issues():
     return total
 
 
+def get_total_issues_prs():
+    """累计 Issue 数 / 累计 PR 数（全状态）"""
+    total_issues = 0
+    total_prs = 0
+    data = gh_get("/search/issues?q=repo:%s+is:issue&per_page=1" % REPO)
+    if data and isinstance(data, dict):
+        total_issues = data.get("total_count", 0)
+    data2 = gh_get("/search/issues?q=repo:%s+is:pr&per_page=1" % REPO)
+    if data2 and isinstance(data2, dict):
+        total_prs = data2.get("total_count", 0)
+    return total_issues, total_prs
+
+
+def get_commits_count():
+    """累计 commits 数（per_page=1 的 Link last 分页号）"""
+    headers = {"Accept": "application/vnd.github+json"}
+    if GITHUB_TOKEN:
+        headers["Authorization"] = f"Bearer {GITHUB_TOKEN}"
+    req = urllib.request.Request(
+        GITHUB_API + f"/repos/{REPO}/commits?per_page=1", headers=headers
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=30) as resp:
+            link = resp.headers.get("Link", "")
+            m = re.search(r'[?&]page=(\d+)>;\s*rel="last"', link)
+            if m:
+                return int(m.group(1))
+    except urllib.error.HTTPError as e:
+        print(f"GH API commits: {e.code}", file=sys.stderr)
+    except Exception as e:
+        print(f"commits fetch error: {e}", file=sys.stderr)
+    return None
+
+
+def get_releases_count():
+    """累计 releases 数（per_page=1 的 Link last 分页号）"""
+    headers = {"Accept": "application/vnd.github+json"}
+    if GITHUB_TOKEN:
+        headers["Authorization"] = f"Bearer {GITHUB_TOKEN}"
+    req = urllib.request.Request(
+        GITHUB_API + f"/repos/{REPO}/releases?per_page=1", headers=headers
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=30) as resp:
+            link = resp.headers.get("Link", "")
+            m = re.search(r'[?&]page=(\d+)>;\s*rel="last"', link)
+            if m:
+                return int(m.group(1))
+    except urllib.error.HTTPError as e:
+        print(f"GH API releases: {e.code}", file=sys.stderr)
+    except Exception as e:
+        print(f"releases fetch error: {e}", file=sys.stderr)
+    return None
+
+
 def get_issues_week():
     """Issue 近7日新增、近7日闭环"""
     since = (datetime.now(timezone.utc) - timedelta(days=7)).strftime("%Y-%m-%d")
@@ -257,16 +324,22 @@ def get_issues_today():
 def build_report():
     today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
     today_dl, week_dl = get_npm_downloads()
+    total_dl = get_npm_total_downloads()
     stars, stars7 = get_stars()
     forks, forks7 = get_forks()
     watchers = get_watchers()
     dependents = get_dependents()
     open_prs = get_open_prs()
     open_issues = get_open_issues()
+    total_issues, total_prs = get_total_issues_prs()
+    total_commits = get_commits_count()
+    total_releases = get_releases_count()
     opened, closed = get_issues_today()
     opened_w, closed_w = get_issues_week()
 
     dep_text = f"- Dependents（被依赖仓库数）：**{dependents}**" if dependents is not None else "- Dependents：N/A"
+    commits_text = f"- 累计 commits：**{total_commits}**" if total_commits is not None else "- 累计 commits：N/A"
+    releases_text = f"- 累计 releases：**{total_releases}**" if total_releases is not None else "- 累计 releases：N/A"
 
     lines = [
         f"# huaweicloud-devkit 运营日报（{today}）",
@@ -274,12 +347,15 @@ def build_report():
         "### 下载量（npm）",
         f"- 今日下载：**{today_dl}**（npm 口径，含 CI/镜像拉取，有延迟）",
         f"- 近 7 日下载：**{week_dl}**",
+        f"- 累计下载：**{total_dl}**",
         "",
         "### 社区活跃（GitHub）",
         f"- 当前 stars：**{stars}**（近7日 +{stars7}）",
         f"- 当前 forks：**{forks}**（近7日 +{forks7}）",
         f"- Watchers：**{watchers}**",
         dep_text,
+        commits_text,
+        releases_text,
         "",
         "### 待处理事项",
         f"- 打开 PR：**{open_prs}**",
@@ -288,6 +364,7 @@ def build_report():
         "### Issue 处理",
         f"- 今日新增：**{opened}** / 今日闭环：**{closed}**",
         f"- 近 7 日新增：**{opened_w}** / 近 7 日闭环：**{closed_w}**",
+        f"- 累计 Issue：**{total_issues}** / 累计 PR：**{total_prs}**",
         "",
     ]
     return "\n".join(lines), today_dl, week_dl, stars, stars7, forks, forks7, watchers, dependents, open_prs, open_issues, opened, closed
