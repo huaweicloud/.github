@@ -15,6 +15,60 @@ queries:
   - label: "GitHub Fine-grained (github_pat_)"
     query: "github_pat_"
 
+# 密钥/凭据候选搜索：命中文件后做内容正则校验（key_patterns），排除占位符
+key_searches:
+  - label: "AK 赋值"
+    query: '"AK="'
+  - label: "SK 赋值"
+    query: '"SK="'
+  - label: "access_key"
+    query: 'access_key'
+  - label: "secret_key"
+    query: 'secret_key'
+  - label: "apikey"
+    query: 'apikey'
+  - label: "api_key"
+    query: 'api_key'
+  - label: "HUAWEICLOUD_SDK_AK"
+    query: 'HUAWEICLOUD_SDK_AK'
+  - label: "HUAWEICLOUD_SDK_SK"
+    query: 'HUAWEICLOUD_SDK_SK'
+  - label: "AccessKeyId"
+    query: 'AccessKeyId'
+  - label: "SecretAccessKey"
+    query: 'SecretAccessKey'
+
+# 凭据值正则校验：匹配到赋值语句（key=.../key: ...）且值为 16+ 位引号字面量
+# 命中即视为可疑硬编码凭据（value 分组用于展示脱敏与占位符判断）
+key_patterns:
+  - label: "AccessKey/AK 硬编码"
+    regex: "(?i)(?:[\"']?)\\b(access_?key(_id)?|AccessKeyId|ak)\\b(?:[\"']?)\\s*[:=]\\s*[\"'](?P<value>[A-Za-z0-9+/=_-]{16,40})[\"']"
+  - label: "SecretKey/SK 硬编码"
+    regex: "(?i)(?:[\"']?)\\b(secret_?key|SecretKey|sk)\\b(?:[\"']?)\\s*[:=]\\s*[\"'](?P<value>[A-Za-z0-9+/=_-]{20,64})[\"']"
+  - label: "API Key 硬编码"
+    regex: "(?i)(?:[\"']?)\\b(api_?key|apikey)\\b(?:[\"']?)\\s*[:=]\\s*[\"'](?P<value>[A-Za-z0-9+/=_-]{16,64})[\"']"
+  - label: "AWS AKIA Key"
+    regex: "\\bAKIA[A-Z0-9]{16}\\b"
+
+# 占位符/示例关键词：命中值内含这些词则跳过（防 SDK 示例误报）
+placeholder_keywords:
+  - "your"
+  - "xxx"
+  - "xxxx"
+  - "example"
+  - "demo"
+  - "test"
+  - "changeit"
+  - "replace"
+  - "placeholder"
+  - "sample"
+  - "dummy"
+  - "fake"
+  - "mock"
+  - "none"
+  - "null"
+  - "empty"
+
 # 已知误报：命中但非真实泄露（路径 fnmatch 后缀匹配）
 allow_paths:
   - "**/gitleaks_rules.json"   # gitleaks 规则文件，含 token 格式定义
