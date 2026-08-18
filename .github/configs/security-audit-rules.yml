@@ -1,0 +1,42 @@
+# 安全自扫描规则：敏感信息命中过滤（security_audit.py 使用）
+
+# 检测模式（q 用于 GitHub code search：org:{org} <query>）
+queries:
+  - label: "邮箱 (1993953167@qq.com)"
+    query: "1993953167"
+  - label: "GitHub PAT (ghp_)"
+    query: "ghp_"
+  - label: "GitHub OAuth (gho_)"
+    query: "gho_"
+  - label: "GitHub App Server (ghs_)"
+    query: "ghs_"
+  - label: "GitHub User Server (ghu_)"
+    query: "ghu_"
+  - label: "GitHub Fine-grained (github_pat_)"
+    query: "github_pat_"
+
+# 已知误报：命中但非真实泄露（路径 fnmatch 后缀匹配）
+allow_paths:
+  - "**/gitleaks_rules.json"   # gitleaks 规则文件，含 token 格式定义
+  - "**/security-audit-guide.md"  # 安全审计指南，示例性说明
+  - "**/gitcode-security-scanner.md"
+  - "*.h"                       # C 头文件（寄存器名误命中，如 HIGHP_REG）
+  - "*.ipynb"                   # Notebook 示例
+  - "*_meta.go"                 # SDK 元数据生成文件
+  - "__init__.py"               # SDK 包导出文件
+  -   "*.pyi"                     # SDK 类型桩
+  - "**/src_Xception_all_aug+TTA/save_model.py"  # ModelArts-Lab 变量 weighs_file_path 误命中 ghs_
+
+# 已知误报：整个仓库放行
+allow_repos:
+  - "huaweicloud/huaweicloud-sdk-c-obs"  # reg.h 寄存器名误报
+
+# 已知存量泄露：已登记、待修复；命中时仅列入"存量"清单，不告警
+# 修复完成后应从本清单移除
+known_issues:
+  - repo: "huaweicloud/.github"
+    paths:
+      - "docs/issues自动化管理流程.md"
+      - "docs/issues自动化管理流程.en.md"
+      - ".github/configs/maintainer-rules.yml"
+    note: "邮箱 1993953167@qq.com（SMTP/收件人）公开，待脱敏"

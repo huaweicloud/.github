@@ -27,7 +27,7 @@ COLORS = {
     "sla.breach": "red", "sla.escalation": "red", "sla.warning": "orange",
     "issue.created": "blue", "issue.closed": "green", "issue.stale": "yellow",
     "report.weekly": "turquoise", "report.monthly": "turquoise",
-    "report.sla_daily": "carmine", "unknown": "grey",
+    "report.sla_daily": "carmine", "report.security": "red", "unknown": "grey",
 }
 
 LABELS = {
@@ -35,7 +35,7 @@ LABELS = {
     "sla.warning": "  SLA 预警", "issue.created": "  New Issue",
     "issue.closed": "  Issue Closed", "issue.stale": "  Issue Stale",
     "report.weekly": "  周报", "report.monthly": "  月报",
-    "report.sla_daily": "  SLA 日报", "unknown": "  Issue 通知",
+    "report.sla_daily": "  SLA 日报", "report.security": "  安全扫描", "unknown": "  Issue 通知",
 }
 
 

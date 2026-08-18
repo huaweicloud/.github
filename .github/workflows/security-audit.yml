@@ -1,0 +1,39 @@
+name: Security Audit (Secret Scan)
+
+on:
+  schedule:
+    - cron: "0 2 * * 1"    # 每周一 UTC 02:00 (CST 10:00)
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install pyyaml requests
+
+      - name: Run Security Scan
+        env:
+          GITHUB_TOKEN: ${{ secrets.BOT_TOKEN }}
+          GITHUB_ORG: "huaweicloud"
+          SECURITY_AUDIT_RULES: ".github/configs/security-audit-rules.yml"
+          ALWAYS_NOTIFY: "1"
+          FEISHU_APP_ID: ${{ secrets.FEISHU_APP_ID }}
+          FEISHU_APP_SECRET: ${{ secrets.FEISHU_APP_SECRET }}
+          FEISHU_ADMIN_OPEN_ID: ${{ secrets.FEISHU_ADMIN_OPEN_ID }}
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASS: ${{ secrets.SMTP_PASS }}
+          EMAIL_REPORT_TO: ${{ secrets.EMAIL_REPORT_TO }}
+        run: python .github/scripts/security_audit.py
