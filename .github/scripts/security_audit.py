@@ -3,7 +3,7 @@
 """GitHub 敏感信息定期自扫描（兜底）
 
 对 org:huaweicloud 公开仓库做 code search：
-  1. 敏感标识符 / GitHub token 前缀（ghp_/gho_/ghs_/ghu_/github_pat_ 等）
+  1. GitHub token 前缀（ghp_/gho_/ghs_/ghu_/github_pat_ 等）
   2. AK/SK/API Key 候选文件 → 内容正则校验赋值语句 → 排除占位符示例
 命中（排除误报 allowlist 与已知存量 known_issues）后通过飞书 + 邮件告警。
 """
@@ -28,8 +28,11 @@ RULES_FILE = os.environ.get(
     "SECURITY_AUDIT_RULES", ".github/configs/security-audit-rules.yml"
 )
 ALWAYS_NOTIFY = os.environ.get("ALWAYS_NOTIFY", "0") == "1"
-MAX_KEY_FILES = int(os.environ.get("MAX_KEY_FILES", "30"))     # 密钥候选最多扫描文件数
+MAX_KEY_FILES = int(os.environ.get("MAX_KEY_FILES", "15"))     # 每类密钥查询最多扫描文件数
+MAX_KEY_TOTAL = int(os.environ.get("MAX_KEY_TOTAL", "60"))     # 密钥类扫描文件总数上限
 MAX_KEY_FINDINGS = int(os.environ.get("MAX_KEY_FINDINGS", "30"))  # 密钥类最多上报命中数
+
+_file_cache = {}
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from feishu_notify import send_notification
@@ -61,11 +64,15 @@ def gh_get(path, accept=None, retries=2):
 def search_code(q, per_page=100, max_pages=10):
     items = []
     page = 1
+    first = True
     while page <= max_pages:
         path = f"/search/code?q={urllib.parse.quote(q)}&per_page={per_page}&page={page}"
         data = gh_get(path, accept="application/vnd.github+json")
         if not isinstance(data, dict):
+            if first:
+                return None  # 首页即失败，明确标记（区别于"无命中"）
             break
+        first = False
         batch = data.get("items", [])
         items.extend(batch)
         total = data.get("total_count", 0)
@@ -95,14 +102,19 @@ def load_rules():
 
 
 def fetch_file_text(repo, path):
-    """通过 contents API 获取文件文本（>1MB 的返回 blob sha，跳过）"""
+    """通过 contents API 获取文件文本（>1MB 的返回 blob sha，跳过）；带进程内缓存去重"""
+    key = f"{repo}/{path}"
+    if key in _file_cache:
+        return _file_cache[key]
     data = gh_get(f"/repos/{repo}/contents/{urllib.parse.quote(path)}")
+    text = ""
     if isinstance(data, dict) and data.get("content"):
         try:
-            return base64.b64decode(data["content"]).decode("utf-8", errors="ignore")
+            text = base64.b64decode(data["content"]).decode("utf-8", errors="ignore")
         except Exception:
-            return ""
-    return ""
+            text = ""
+    _file_cache[key] = text
+    return text
 
 
 def mask(value):
@@ -164,15 +176,21 @@ def known_match(rules, repo, path):
     return None
 
 
-def build_report(today, new_findings, known_hits):
+def build_report(today, new_findings, known_hits, search_failures=0):
     lines = [
         f"# huaweicloud 敏感信息安全扫描（{today}）",
         "",
         f"扫描范围：`org:{ORG}` 公开仓库代码",
-        "检测模式：邮箱标识符 + GitHub token 前缀（ghp_/gho_/ghs_/ghu_/github_pat_）",
+        "检测模式：GitHub token 前缀（ghp_/gho_/ghs_/ghu_/github_pat_）",
         "           + AK/SK/API Key 硬编码赋值（内容正则校验，已排除示例占位符）",
         "",
     ]
+    if search_failures:
+        lines.append(
+            f"### ⚠️ 警告：{search_failures} 个搜索查询执行失败（限流/token 异常/网络错误），"
+            "本次结果为不完整扫描，请检查后重跑"
+        )
+        lines.append("")
     if new_findings:
         lines.append(f"### 🚨 新增命中 {len(new_findings)} 项")
         lines.append("| 仓库 | 文件 | 匹配模式 |")
@@ -214,6 +232,7 @@ def main():
     today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
     new_findings = []
     known_hits = []
+    search_failures = 0
 
     # 1) 标识符/token 前缀扫描
     for q in rules.get("queries", []):
@@ -222,6 +241,10 @@ def main():
             continue
         label = q.get("label", query)
         hits = search_code(f"org:{ORG} {query}")
+        if hits is None:
+            search_failures += 1
+            time.sleep(3)
+            continue
         for item in hits:
             repo = item.get("repository", {}).get("full_name", "")
             path = item.get("path", "")
@@ -232,38 +255,46 @@ def main():
                 known_hits.append((repo, path, kn.get("note", "已知存量")))
             else:
                 new_findings.append((repo, path, label))
-        time.sleep(6)
+        time.sleep(3)
 
     # 2) AK/SK/API key 候选扫描（搜索候选 + 内容正则校验）
     key_found = 0
-    key_scanned_files = 0
+    key_scanned_total = 0
     for q in rules.get("key_searches", []):
         query = q.get("query", "")
         if not query:
             continue
         hits = search_code(f"org:{ORG} {query}")
+        if hits is None:
+            search_failures += 1
+            time.sleep(3)
+            continue
+        key_scanned_query = 0
         for item in hits:
             repo = item.get("repository", {}).get("full_name", "")
             path = item.get("path", "")
             if is_allowed(rules, repo, path) or known_match(rules, repo, path):
                 continue
-            key_scanned_files += 1
+            key_scanned_query += 1
+            key_scanned_total += 1
             for label, val in scan_key_patterns(rules, repo, path):
                 new_findings.append((repo, path, f"{label} ({val})"))
                 key_found += 1
                 if key_found >= MAX_KEY_FINDINGS:
                     break
-            if key_scanned_files >= MAX_KEY_FILES:
+            if key_scanned_query >= MAX_KEY_FILES or key_scanned_total >= MAX_KEY_TOTAL:
                 break
-        if key_found >= MAX_KEY_FINDINGS or key_scanned_files >= MAX_KEY_FILES:
+        if key_found >= MAX_KEY_FINDINGS or key_scanned_total >= MAX_KEY_TOTAL:
             break
-        time.sleep(6)
+        time.sleep(3)
 
-    report = build_report(today, new_findings, known_hits)
+    report = build_report(today, new_findings, known_hits, search_failures)
     print(report)
 
-    if new_findings or ALWAYS_NOTIFY:
-        if new_findings:
+    if new_findings or search_failures or ALWAYS_NOTIFY:
+        if search_failures:
+            subject = f"⚠️ huaweicloud 敏感信息扫描不完整（{search_failures} 个查询失败）"
+        elif new_findings:
             subject = f"🚨 huaweicloud 敏感信息扫描：新增 {len(new_findings)} 项"
         else:
             subject = f"✅ huaweicloud 敏感信息扫描（{today}）"
