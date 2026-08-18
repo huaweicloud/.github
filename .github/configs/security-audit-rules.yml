@@ -80,6 +80,8 @@ allow_paths:
   - "__init__.py"               # SDK 包导出文件
   -   "*.pyi"                     # SDK 类型桩
   - "**/src_Xception_all_aug+TTA/save_model.py"  # ModelArts-Lab 变量 weighs_file_path 误命中 ghs_
+  - ".github/configs/security-audit-rules.yml"  # 本扫描器的规则文件（含检测模式字符串，自引用）
+  - ".github/scripts/security_audit.py"         # 本扫描器的脚本（含检测模式字符串，自引用）
 
 # 已知误报：整个仓库放行
 allow_repos:
