@@ -73,21 +73,25 @@ def gh_get(path, accept=None):
 
 
 def get_npm_downloads():
-    """npm 下载量：当日 + 近7天（用显式日期范围，避开 last-7-days 端点 bug）"""
-    today = datetime.now(timezone.utc)
-    def _range(start, end):
-        url = f"https://api.npmjs.org/downloads/point/{start}:{end}/{NPM_PKG}"
-        try:
-            req = urllib.request.Request(url, headers={"Accept": "application/json"})
-            with urllib.request.urlopen(req, timeout=30) as resp:
-                return json.loads(resp.read()).get("downloads", 0)
-        except Exception:
-            return 0
-    today_str = today.strftime("%Y-%m-%d")
-    last7_start = (today - timedelta(days=7)).strftime("%Y-%m-%d")
-    today_dl = _range(today_str, today_str)
-    week_dl = _range(last7_start, today_str)
-    return today_dl, week_dl
+    """npm 下载量：最新完整日 + 近7日
+
+    npm 统计数据有 ~1 天延迟，当日查询永远返回 0。
+    改用 range/last-week 获取逐日数据，取最后一天为最新完整日下载量。
+    """
+    url = f"https://api.npmjs.org/downloads/range/last-week/{NPM_PKG}"
+    try:
+        req = urllib.request.Request(url, headers={"Accept": "application/json"})
+        with urllib.request.urlopen(req, timeout=30) as resp:
+            data = json.loads(resp.read())
+            daily = data.get("downloads", [])
+            if not daily:
+                return 0, 0
+            latest_day_dl = daily[-1].get("downloads", 0)
+            week_dl = sum(d.get("downloads", 0) for d in daily)
+            return latest_day_dl, week_dl
+    except Exception as e:
+        print(f"npm range error: {e}", file=sys.stderr)
+        return 0, 0
 
 
 def get_npm_total_downloads():
@@ -345,7 +349,7 @@ def build_report():
         f"# huaweicloud-devkit 运营日报（{today}）",
         "",
         "### 下载量（npm）",
-        f"- 今日下载：**{today_dl}**（npm 口径，含 CI/镜像拉取，有延迟）",
+        f"- 最新完整日下载：**{today_dl}**（npm 口径，含 CI/镜像拉取，数据有 ~1 天延迟）",
         f"- 近 7 日下载：**{week_dl}**",
         f"- 累计下载：**{total_dl}**",
         "",
