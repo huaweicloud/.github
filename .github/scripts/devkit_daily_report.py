@@ -84,11 +84,12 @@ def get_npm_downloads():
         with urllib.request.urlopen(req, timeout=30) as resp:
             data = json.loads(resp.read())
             daily = data.get("downloads", [])
-            if not daily:
-                return 0, 0
+if not daily:
+                return 0, 0, ""
             latest_day_dl = daily[-1].get("downloads", 0)
+            latest_day = daily[-1].get("day", "")
             week_dl = sum(d.get("downloads", 0) for d in daily)
-            return latest_day_dl, week_dl
+            return latest_day_dl, week_dl, latest_day
     except Exception as e:
         print(f"npm range error: {e}", file=sys.stderr)
         return 0, 0
@@ -327,7 +328,7 @@ def get_issues_today():
 
 def build_report():
     today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
-    today_dl, week_dl = get_npm_downloads()
+    today_dl, week_dl, npm_date = get_npm_downloads()
     total_dl = get_npm_total_downloads()
     stars, stars7 = get_stars()
     forks, forks7 = get_forks()
@@ -349,7 +350,7 @@ def build_report():
         f"# huaweicloud-devkit 运营日报（{today}）",
         "",
         "### 下载量（npm）",
-        f"- 最新完整日下载：**{today_dl}**（npm 口径，含 CI/镜像拉取，数据有 ~1 天延迟）",
+        f"- 下载量（{npm_date}）：**{today_dl}**（npm 口径，含 CI/镜像拉取，数据有 ~1 天延迟）",
         f"- 近 7 日下载：**{week_dl}**",
         f"- 累计下载：**{total_dl}**",
         "",
@@ -371,7 +372,7 @@ def build_report():
         f"- 累计 Issue：**{total_issues}** / 累计 PR：**{total_prs}**",
         "",
     ]
-    return "\n".join(lines), today_dl, week_dl, stars, stars7, forks, forks7, watchers, dependents, open_prs, open_issues, opened, closed
+    return "\n".join(lines), today_dl, week_dl, npm_date, stars, stars7, forks, forks7, watchers, dependents, open_prs, open_issues, opened, closed
 
 
 def main():
@@ -388,3 +389,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
