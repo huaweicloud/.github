@@ -84,7 +84,7 @@ def get_npm_downloads():
         with urllib.request.urlopen(req, timeout=30) as resp:
             data = json.loads(resp.read())
             daily = data.get("downloads", [])
-if not daily:
+            if not daily:
                 return 0, 0, ""
             latest_day_dl = daily[-1].get("downloads", 0)
             latest_day = daily[-1].get("day", "")
@@ -92,7 +92,7 @@ if not daily:
             return latest_day_dl, week_dl, latest_day
     except Exception as e:
         print(f"npm range error: {e}", file=sys.stderr)
-        return 0, 0
+        return 0, 0, ""
 
 
 def get_npm_total_downloads():
