@@ -14,12 +14,13 @@ HUAWEI CLOUD 组织托管华为云面向开发者的开源项目，涵盖 **SDK 
 
 | 项目 / Project | 领域 / Domain | 说明 / Description |
 |------|------|------|
-| [terraform-provider-huaweicloud](https://github.com/huaweicloud/terraform-provider-huaweicloud) | IaC | 华为云 Terraform Provider，用代码管理云资源 |
-| [huaweicloud-sdk-go](https://github.com/huaweicloud/huaweicloud-sdk-go) | SDK | Go 语言华为云 SDK |
-| [huaweicloud-sdk-python](https://github.com/huaweicloud/huaweicloud-sdk-python) | SDK | Python 语言华为云 SDK |
-| [huaweicloud-sdk-java](https://github.com/huaweicloud/huaweicloud-sdk-java) | SDK | Java 语言华为云 SDK |
-| [huaweicloud-obs-obsutil](https://github.com/huaweicloud/huaweicloud-obs-obsutil) | 工具 / Tools | OBS 命令行工具 |
-| [spring-cloud-huawei](https://github.com/huaweicloud/spring-cloud-huawei) | 集成 / Integration | Spring Cloud 华为云集成 |
+| [terraform-provider-huaweicloud](https://github.com/huaweicloud/terraform-provider-huaweicloud) | IaC | 华为云 Terraform Provider，用代码管理云资源 / Huawei Cloud Terraform Provider — manage cloud resources as code |
+| [huaweicloud-sdk-python-v3](https://github.com/huaweicloud/huaweicloud-sdk-python-v3) | SDK | Python 语言华为云 SDK / Huawei Cloud SDK for Python |
+| [huaweicloud-sdk-java-v3](https://github.com/huaweicloud/huaweicloud-sdk-java-v3) | SDK | Java 语言华为云 SDK / Huawei Cloud SDK for Java |
+| [huaweicloud-sdk-go-v3](https://github.com/huaweicloud/huaweicloud-sdk-go-v3) | SDK | Go 语言华为云 SDK / Huawei Cloud SDK for Go |
+| [huaweicloud-devkit](https://github.com/huaweicloud/huaweicloud-devkit) | 工具 / Tools | 华为云官方 AI Agent 插件，提供 skills、MCP 工具与安全护栏 / Official Huawei Cloud plugin for AI agents — skills, MCP tools, and safety guardrails |
+| [huaweicloud-skills](https://github.com/huaweicloud/huaweicloud-skills) | 工具 / Tools | 华为云 Agent 技能库 / Huawei Cloud Agent skills library |
+| [spring-cloud-huawei](https://github.com/huaweicloud/spring-cloud-huawei) | 集成 / Integration | Spring Cloud 华为云集成 / Spring Cloud integration for Huawei Cloud |
 
 ## 快速开始 / Quick Start
 
